@@ -85,7 +85,7 @@ class FrameAnalysisData:
                 return deduped_filename
         return ""
 
-    
+
 
 @dataclass
 class FrameAnalysisLog:
