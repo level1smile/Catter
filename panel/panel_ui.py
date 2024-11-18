@@ -19,6 +19,8 @@ class CatterModelUI(bpy.types.Panel):
         row = layout.row()
         row.operator("catter.extract_model", text="Extract Model")
 
+       
+
 
 
 class CatterConfigUI(bpy.types.Panel):
@@ -32,6 +34,7 @@ class CatterConfigUI(bpy.types.Panel):
         layout = self.layout
 
         row = layout.row()
+        row.prop(context.scene, 'catter_game_name_enum')
         # row.operator("my.create_cube", text="Create Cube")
 
 
