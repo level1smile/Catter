@@ -1,6 +1,3 @@
-# Nico: 此文件定义右键菜单的功能类。
-# 4.2版本开始，bl_options里再加任何东西都会出现 
-# RuntimeError: Error: validating class:: 'REGISTER' not found in ('SEARCH_ON_KEY_PRESS')
 from .mesh_functions import *
 
 
@@ -107,14 +104,12 @@ class RecalculateCOLORWithVectorNormalizedNormal(bpy.types.Operator):
         return {'FINISHED'}
 
  
-# -----------------------------------这个属于右键菜单注册，单独的函数要往上面放---------------------------------------
-class MigotoRightClickMenu(bpy.types.Menu):
+class CatterRightClickMenu(bpy.types.Menu):
     bl_idname = "VIEW3D_MT_object_3Dmigoto"
-    bl_label = "3Dmigoto"
+    bl_label = "Catter"
     
     def draw(self, context):
         layout = self.layout
-        # layout.operator可以直接用 [类名.bl_idname] 这样就不用再写一次常量了，方便管理
         layout.operator(RemoveUnusedVertexGroupOperator.bl_idname)
         layout.operator(MergeVertexGroupsWithSameNumber.bl_idname)
         layout.operator(FillVertexGroupGaps.bl_idname)
@@ -129,32 +124,26 @@ class MigotoRightClickMenu(bpy.types.Menu):
         layout.operator(RecalculateCOLORWithVectorNormalizedNormal.bl_idname)
 
 
-# 定义菜单项的注册函数
 def menu_func_migoto_right_click(self, context):
-    self.layout.menu(MigotoRightClickMenu.bl_idname)
+    self.layout.separator()
+    self.layout.menu(CatterRightClickMenu.bl_idname)
 
 
-# --------------------------
-# Right click menu for collection.
-class DBMT_MarkCollection_Switch(bpy.types.Operator):
-    # bl_idname必须小写，中间可以下划线分割，不然报错无法加载
+class Catter_MarkCollection_Switch(bpy.types.Operator):
     bl_idname = "object.mark_collection_switch"
     bl_label = "Mark Collection Switch"
 
     def execute(self, context):
-        # 示例：打印当前选中的集合名称
         if context.collection:
             context.collection.color_tag = "COLOR_03"
         return {'FINISHED'}
 
 
-class DBMT_MarkCollection_Toggle(bpy.types.Operator):
-    # bl_idname必须小写，中间可以下划线分割，不然报错无法加载
+class Catter_MarkCollection_Toggle(bpy.types.Operator):
     bl_idname = "object.mark_collection_toggle"
     bl_label = "Mark Collection Toggle"
 
     def execute(self, context):
-        # 示例：打印当前选中的集合名称
         if context.collection:
             context.collection.color_tag = "COLOR_04"
         return {'FINISHED'}
@@ -162,5 +151,5 @@ class DBMT_MarkCollection_Toggle(bpy.types.Operator):
 
 def menu_dbmt_mark_collection_switch(self, context):
     self.layout.separator()
-    self.layout.operator(DBMT_MarkCollection_Switch.bl_idname, text="分支:标记为按键开关类型")
-    self.layout.operator(DBMT_MarkCollection_Toggle.bl_idname, text="分支:标记为按键切换类型")
+    self.layout.operator(Catter_MarkCollection_Switch.bl_idname, text="分支:标记为按键开关类型")
+    self.layout.operator(Catter_MarkCollection_Toggle.bl_idname, text="分支:标记为按键切换类型")

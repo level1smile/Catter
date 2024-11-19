@@ -74,11 +74,11 @@ class MMTPathOperator(bpy.types.Operator):
 
 # MMT的侧边栏
 class MMTPanel(bpy.types.Panel):
-    bl_label = "DBMT插件 " 
+    bl_label = "DBMT" 
     bl_idname = "VIEW3D_PT_DBMT_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'DBMT'
+    bl_category = 'Catter'
 
     def draw(self, context):
         layout = self.layout

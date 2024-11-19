@@ -159,29 +159,6 @@ def get_import_drawib_folder_path_list()->list:
     return import_folder_path_list
 
 
-
-# get all xxx-1 from xxx-1.ib xxx-1.vb xxx-1.fmt from our drawib folder to get all possible model name prefix.
-# TODO Deprecated (will remove this when all game use new architecture based on tmp.json[ImportModelList] and generate based on export.json)
-def get_prefix_set_from_import_folder(import_folder_path:str) ->list:
-    prefix_set = set()
-    file_pattern = os.path.join(import_folder_path, "*.ib")
-
-    txt_file_list = glob(file_pattern)
-    for txt_file_path in txt_file_list:
-        if os.path.basename(txt_file_path).find("-") == -1:
-            continue
-
-        # self.report({'INFO'}, "txt file: " + txt_file_path)
-        txt_file_splits = os.path.basename(txt_file_path).split("-")
-        ib_file_name = txt_file_splits[0] + "-" + txt_file_splits[1]
-        ib_file_name = ib_file_name[0:len(ib_file_name) - 3]
-        prefix_set.add(ib_file_name)
-    prefix_list = list(prefix_set)
-
-    # Sort to make sure name is ordered by partname number.
-    prefix_list.sort()
-    return prefix_list
-
 # Read import model name list from tmp.json.
 def get_prefix_list_from_tmp_json(import_folder_path:str) ->list:
     

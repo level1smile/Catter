@@ -157,7 +157,7 @@ def read_shape_key_offset(file_path):
     if len(unpacked_data) > 1:
         unique_data = []
         seen = {}
-        # TODO 这里为啥要反转？为啥每个数据只能出现两次？
+        # 这里反转是要从后往前读，每个数据出现两次避免遗漏最后一个
         for value in reversed(unpacked_data):
             if value not in seen: # 没出现过就增加并设为出现过
                 seen[value] = 1
@@ -179,9 +179,6 @@ def read_shape_key_vertex_id(file_path):
     format_string = '<' + 'I' * num_ids
     return struct.unpack(format_string, data)
 
-# TODO 这里三个读取方法，是否对应游戏本身的数据？这个R16_UINT的数据，应该是从cs-cb0中能够直接读取出来
-# 上面的ShapeKey_Offset和ShapeKey_VertexID应该在游戏原本数据里就能读取出来
-# 这里应该就是WWMI读取的简化版本，但是仍然要确认WWMI的CustomShader是否只是对游戏原生Shader简单的翻译
 def read_shape_key_vertex_offset(file_path):
     with open(file_path, 'rb') as file:
         data = file.read()

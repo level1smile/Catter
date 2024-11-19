@@ -67,7 +67,7 @@ register_classes = (
     ConvertToFragmentOperator,
     MMTDeleteLoose,
     MMTResetRotation,
-    MigotoRightClickMenu,
+    CatterRightClickMenu,
     SplitMeshByCommonVertexGroup,
     RecalculateTANGENTWithVectorNormalizedNormal,
     RecalculateCOLORWithVectorNormalizedNormal,
@@ -75,8 +75,8 @@ register_classes = (
     MMDModIniGenerator,
 
     # Collection's right click menu item.
-    DBMT_MarkCollection_Switch,
-    DBMT_MarkCollection_Toggle
+    Catter_MarkCollection_Switch,
+    Catter_MarkCollection_Toggle
     
 )
 
