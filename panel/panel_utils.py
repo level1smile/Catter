@@ -39,6 +39,6 @@ def game_items(self, context):
     games_path = os.path.join(launcher_path, "Games")
     gamename_list = os.listdir(games_path)
     for gamename in gamename_list:
-        items.append(("OPTION_" + gamename,gamename,gamename))
+        items.append((gamename,gamename,gamename))
 
     return items

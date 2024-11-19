@@ -1,27 +1,129 @@
 from ..common.global_config import *
 
 def unity_auto_gametype(draw_ib:str,global_config:GlobalConfig):
+    fadata = FrameAnalysisData(global_config.WorkFolder)
+    falog = FrameAnalysisLog(global_config.WorkFolder)
+
     # auto detect game type
+    possible_gametype_list:list[D3D11GameType] = []
+
     for gametype in global_config.D3D11GameTypeConfig.Ordered_GPU_CPU_D3D11GameTypeList:
+        log_info("Current detect gametype: " + gametype.GameTypeName)
 
-        # find TEXCOORD category
-        texcoord_category = gametype.ElementNameD3D11ElementDict["TEXCOORD"].Category
-        texcoord_slot = gametype.CategoryExtractSlotDict[texcoord_category]
-        texcoord_stride = gametype.CategoryStrideDict[texcoord_category]
+        # if TEXCOORD in TrianglelistIndex, we use TEXCOORD , or we use POSITION
+        detect_element_name = ""
+        if gametype.ElementNameD3D11ElementDict["TEXCOORD"].ExtractTechnique == "trianglelist":
+            detect_element_name = "TEXCOORD"
+        else:
+            detect_element_name = "POSITION"
+        
+        detect_category = gametype.ElementNameD3D11ElementDict[detect_element_name].Category
+        detect_slot = gametype.CategoryExtractSlotDict[detect_category]
+        detect_stride = gametype.CategoryStrideDict[detect_category]
 
-                
+        trianglelist_index_list= falog.get_index_list_by_draw_ib(draw_ib=draw_ib,only_match_first=False)
 
+        trianglelist_extract_index = ""
+        vertex_count = 0
+        for trianglelist_index in trianglelist_index_list:
+            # log_info("Index: " + trianglelist_index)
+            detect_filename_list =fadata.filter_filename(trianglelist_index + "-" + detect_slot,".buf")
+            if len(detect_filename_list) == 0:
+                continue
+            detect_filepath = os.path.join(fadata.WorkFolder,detect_filename_list[0])
+            detect_file_size = os.path.getsize(detect_filepath)
+            vertex_count = detect_file_size / detect_stride
+            trianglelist_extract_index = trianglelist_index
+            break
+        
+        pointlist_extract_index = falog.get_pointlist_index_by_draw_ib(draw_ib=draw_ib)
+
+        # log_info("Trianglelist Extract Index: " + trianglelist_extract_index)
+        # log_info("Pointlist Extract Index: " + pointlist_extract_index)
+
+        log_info("Detect ElementName: " + detect_element_name + " detect_slot: " + str(detect_slot) + " detect_stride:" + str(detect_stride))
+
+        log_info("Detect FileSize: " +str(detect_file_size) +" Assume VertexCount: " + str(vertex_count))
+
+        # read every slot file to validate gametype.
+        all_category_match = True
+        for category_name,category_slot in gametype.CategoryExtractSlotDict.items():
+            category_stride = gametype.CategoryStrideDict[category_name]
+            category_extract_technique = gametype.CategoryExtractTechniqueDict[category_name]
+
+            category_extract_index = trianglelist_extract_index
+            if category_extract_technique == "pointlist":
+                category_extract_index = pointlist_extract_index
+            
+            log_info("category_name: " + category_name + " extract technique: " + category_extract_technique + " category stride: " + str(category_stride))
+            
+            category_filename_list =  fadata.filter_filename(category_extract_index + "-" + category_slot, ".buf")
+            if len(category_filename_list) == 0:
+                log_warning_str("can't find category_filename_list for: " + category_slot)
+                all_category_match = False
+                break
+
+            category_filename = category_filename_list[0]
+            category_filepath = os.path.join(fadata.WorkFolder, category_filename)
+            category_filesize = os.path.getsize(category_filepath)
+            category_vertex_count = category_filesize / category_stride
+            log_info("assume vertexcount: " + str(vertex_count) + " category_vertex_count: " + str(category_filesize) + " / " + str(category_stride) + " = " + str(category_vertex_count))
+
+            if category_vertex_count != vertex_count:
+                all_category_match = False
+                log_warning_str("categpry vertex count not match " + category_slot)
+                break
+        
+        if all_category_match:
+            log_warning_str("GameType Matched: " + gametype.GameTypeName)
+            possible_gametype_list.append(gametype)
+        else:
+            log_warning_str("not all category match")
+        log_newline()
+    
+    log_info("all matched gametype:")
+    for gametype in possible_gametype_list:
+        log_info(gametype.GameTypeName)
+    log_newline()
+
+    matched_game_type = ""
+
+    if len(possible_gametype_list) == 1:
+        matched_game_type = possible_gametype_list[0].GameTypeName
+    else:
+
+        gpu_preskinning_number = 0
+        cpu_preskinning_number = 0
+        for gametype in possible_gametype_list:
+            if gametype.GPU_PreSkinning:
+                gpu_preskinning_number = gpu_preskinning_number + 1
+            else:
+                cpu_preskinning_number = cpu_preskinning_number + 1
+        
+        if gpu_preskinning_number == 1:
+            matched_game_type = possible_gametype_list[0].GameTypeName
+        elif gpu_preskinning_number > 1:
+            log_warning_str("more than 1 GPU-PreSkinning gametype matched.")
+        elif cpu_preskinning_number > 1:
+            log_warning_str("more than 1 CPU-PreSkinning gametype matched.")
+        else:
+            log_warning_str("no any gametype matched.")
+
+    return matched_game_type,trianglelist_extract_index,pointlist_extract_index
+    
+        
     
 def unity_extract_model(draw_ib_list,global_config:GlobalConfig):
+    fadata = FrameAnalysisData(global_config.WorkFolder)
+    falog = FrameAnalysisLog(global_config.WorkFolder)
+
     log_info("Start to extract model:")
     for draw_ib in draw_ib_list:
         log_info("Current DrawIB: " + draw_ib)
 
-        gametype = unity_auto_gametype(draw_ib=draw_ib,global_config=global_config)
+        matched_game_type, trianglelist_extract_index, pointlist_extract_index = unity_auto_gametype(draw_ib=draw_ib,global_config=global_config)
+        log_info("Matched GameType: " + matched_game_type)
+        
+        
 
-        # Find Trianglelist Index from FALog
-        falog = FrameAnalysisLog(global_config.WorkFolder)
-        trianglelist_index_list= falog.get_index_list_by_draw_ib(draw_ib=draw_ib,only_match_first=False)
-        for trianglelist_index in trianglelist_index_list:
-            log_info("Index: " + trianglelist_index)
-            
+        

@@ -37,7 +37,7 @@ class ExtractModelOperator(bpy.types.Operator):
 
     def execute(self, context):
         # combine global config.
-        current_game = get_current_game_from_main_json()
+        current_game = bpy.context.scene.catter_game_name_enum
         loader_path = os.path.join(bpy.context.scene.mmt_props.path,"Games\\" )
         config_path = os.path.join(bpy.context.scene.mmt_props.path,"Configs\\ExtractTypes\\" + current_game + "\\")
         g = GlobalConfig(GameName=current_game,GameLoaderPath=loader_path,ConfigFolderPath=config_path)

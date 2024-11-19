@@ -269,7 +269,7 @@ def import_3dmigoto_raw_buffers(operator, context, fmt_path:str, vb_path:str, ib
     obj["3DMigoto:RecalculateCOLOR"] = False
 
     # get current gamename
-    current_game = get_current_game_from_main_json(in_path=main_json_path)
+    current_game = bpy.context.scene.catter_game_name_enum
 
     # Nico: GI,HSR,ZZZ必须重计算TANGENT, 直接在导入时设置。
     # 不重计算时薄的双面模型会直接露出里面黑色的部分，以及轮廓线也会有问题。

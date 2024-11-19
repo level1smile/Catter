@@ -21,14 +21,11 @@ class CatterConfigUI(bpy.types.Panel):
         if not os.path.exists(dbmt_gui_exe_path):
             layout.label(text="错误:请选择DBMT-GUI.exe所在路径 ", icon='ERROR')
         
-        current_game = get_current_game_from_main_json()
-        if current_game != "":
-            layout.label(text="Current Game: " + current_game)
-        else:
-            layout.label(text="错误:请选择DBMT-GUI.exe所在路径 ", icon='ERROR')
+        row = layout.row()
+        row.prop(context.scene, 'catter_game_name_enum')
 
         
-        layout.prop(context.scene.mmt_props, "export_same_number", text="Keep Same Vertex Number at Export.")
+        layout.prop(context.scene.mmt_props, "export_same_number", text="Keep Same Vertex Number.")
 
         # flip_tangent_w
         layout.prop(context.scene.mmt_props, "flip_tangent_w", text="Flip TANGENT.w")
@@ -47,9 +44,7 @@ class CatterModelUI(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
 
-        row = layout.row()
-        row.prop(context.scene, 'catter_game_name_enum')
-
+        
         row = layout.row()
         row.prop(context.scene, "catter_drawib_input")
 
@@ -69,8 +64,6 @@ class IOPanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        props = context.scene.mmt_props
-        
 
         # Get output folder path.
         output_folder_path = get_output_folder_path()
@@ -87,7 +80,7 @@ class IOPanel(bpy.types.Panel):
         operator_export_ibvb = self.layout.operator("export_mesh.migoto_mmt", text="导出 .ib & .vb 模型文件")
         operator_export_ibvb.filepath = output_folder_path + "1.vb"
 
-        current_game = get_current_game_from_main_json()
+        current_game = bpy.context.scene.catter_game_name_enum
         # hoyogames use new architecture so can't use old import export method.
         if current_game not in ["HI3","GI","HSR","ZZZ","Unity-CPU-PreSkinning"]:
             # 添加分隔符

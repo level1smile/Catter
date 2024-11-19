@@ -6,115 +6,20 @@ from typing import List,Dict
 from enum import Enum
 
 from ..utils.dbmt_file_utils import *
-from ..common.d3d11_game_type import *
 from ..utils.dbmt_log_utils import *
 
-# Nico: Thanks for SpectrumQT's WWMI project, I learned how to use @dataclass to save my time 
-# and lots of other python features so use python can works as good as C++ and better and faster.
-
-class HashType(Enum):
-    Texture = "-ps-t"
-    VertexBuffer = "-vb"
-    ConstantBuffer = "-cb"
-
-    ComputeShader = "-cs="
-    VertexShader = "-vs="
-    PixelShader = "-ps="
+from .d3d11_game_type import *
+from .frame_analysis import *
 
 
 @dataclass
-class ResourceFile:
-    FilePath:str
+class DrawIBConfig:
+    DrawIB:str
 
-    FileName:str = field(init=False)
-    TypeSlot:str = field(init=False)
+    
 
     def __post_init__(self):
-        self.FileName = os.path.basename(self.FilePath)
-        self.TypeSlot = self.get_type_slot()
-
-    def get_hash(self,hash_type:str,hash_length:int)->str:
-        if hash_type not in self.FileName:
-            return ""
-            
-        if "=" in hash_type:
-            split_right_str = self.FileName.split(hash_type)[1]
-            return split_right_str[0:hash_length]
-        else:
-            split_right_str = self.FileName.split(hash_type)[1]
-            equal_index = split_right_str.find('=')
-            start_index = equal_index + 1
-            end_index = equal_index + hash_length
-            return split_right_str[start_index:end_index]
-        
-    def get_type_slot(self)->str:
-        if "=" in self.FileName:
-            split_first = self.FileName.split("=")[0]
-
-        return split_first[len("000001-"):]
-
-
-@dataclass
-class FrameAnalysisData:
-    WorkFolder:str
-
-    FileNameList:list[str] = field(init=False)
-    DedupedFileNameList:list[str] = field(init=False)
-
-    def __post_init__(self):
-        self.FileNameList = dbmt_fileutil__list_files(self.WorkFolder)
-        self.DedupedFileNameList = dbmt_fileutil__list_files(os.path.join(self.WorkFolder,"deduped\\"))
-
-    def filter_filename(self,contain:str,suffix:str) -> list[str]:
-        new_filename_list = []
-        for file_name in self.FileNameList:
-            if contain in file_name and file_name.endswith(suffix):
-                new_filename_list.append(file_name)
-        return new_filename_list
-    
-    def get_indexlist_by_drawib(self,drawib:str) -> list[str]:
-        indexlist = []
-        ib_related_filename_list = self.filter_filename(contain=drawib,suffix=".buf")
-        for ib_related_filename in ib_related_filename_list:
-            indexlist.append(ib_related_filename[0:6])
-        return indexlist
-    
-    def get_deduped_filename_by_hash(self,file_hash:str)->str:
-        for deduped_filename in self.DedupedFileNameList:
-            if file_hash in deduped_filename:
-                return deduped_filename
-        return ""
-
-
-
-@dataclass
-class FrameAnalysisLog:
-    WorkFolder:str
-
-    LogFilePath:str = field(init=False)
-
-    LogLineList:list[str] = field(init=False)
-
-    def __post_init__(self):
-        self.LogFilePath = os.path.join(self.WorkFolder,"log.txt")
-        with open(self.LogFilePath, 'r') as file:
-            self.LogLineList = file.readlines()
-    
-    def get_index_list_by_draw_ib(self,draw_ib:str,only_match_first:bool)->list[str]:
-        index_set = set()
-        current_index = ""
-        for log_line in self.LogLineList:
-            if log_line.startswith("00"):
-                current_index = log_line[0:6]
-            
-            if "hash=" + draw_ib in log_line:
-                index_set.add(current_index)
-                if only_match_first:
-                    break
-        index_list = list(index_set)
-        index_list.sort()
-        return index_list
-
+        pass
 
 
 @dataclass
