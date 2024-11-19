@@ -33,15 +33,15 @@ register_classes = (
 
     # Extract Model
     ExtractModelOperator,
-
+    GenerateModOperator,
     # DrawIB TextBox
     DrawIBInputOperator,
 
 
     # migoto
     DBMTProperties,
-    MMTPathOperator,
-    MMTPanel,
+    CatterLauncherPathOperator,
+    IOPanel,
 
     # 3Dmigoto ib和vb格式导入导出
     Import3DMigotoRaw,
@@ -126,7 +126,7 @@ def register():
     bpy.types.VIEW3D_MT_object_context_menu.append(menu_func_migoto_right_click)
     bpy.types.OUTLINER_MT_collection.append(menu_dbmt_mark_collection_switch)
 
-    bpy.app.handlers.depsgraph_update_post.append(save_mmt_path)
+    bpy.app.handlers.depsgraph_update_post.append(save_catter_launcher_path)
 
 def unregister():
     for cls in reversed(register_classes):

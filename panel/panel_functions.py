@@ -3,63 +3,45 @@ import os
 import json
 
 
-def save_mmt_path(path):
-    # 获取当前脚本文件的路径
+def save_catter_launcher_path(path):
     script_path = os.path.abspath(__file__)
 
-    # 获取当前插件的工作目录
     plugin_directory = os.path.dirname(script_path)
 
-    # 构建保存文件的路径
     config_path = os.path.join(plugin_directory, 'Config.json')
 
-    # 创建字典对象
-    config = {'mmt_path': bpy.context.scene.mmt_props.path}
+    config = {'catter_launcher_path': bpy.context.scene.mmt_props.path}
 
-    # 将字典对象转换为 JSON 格式的字符串
     json_data = json.dumps(config)
 
-    # 保存到文件
     with open(config_path, 'w') as file:
         file.write(json_data)
 
 
-def load_mmt_path():
-    # 获取当前脚本文件的路径
+def load_catter_launcher_path():
     script_path = os.path.abspath(__file__)
 
-    # 获取当前插件的工作目录
     plugin_directory = os.path.dirname(script_path)
 
-    # 构建配置文件的路径
     config_path = os.path.join(plugin_directory, 'Config.json')
 
-    # 读取文件
     with open(config_path, 'r') as file:
         json_data = file.read()
 
-    # 将 JSON 格式的字符串解析为字典对象
     config = json.loads(json_data)
 
-    # 读取保存的路径
-    return config['mmt_path']
+    return config['catter_launcher_path']
 
 
-# A enum for show games drop menu.
 def game_items(self, context):
-    items = [
-        ('OPTION_GI', 'GI', 'Genshin Impact'),
-        ('OPTION_HI3', 'HI3', 'Honkai Impact 3'),
-        ('OPTION_HSR', 'HSR', 'Honkai StarRail'),
-        ('OPTION_ZZZ', 'ZZZ', 'Zenless Zone Zero'),
-        ('OPTION_WW', 'WW', 'Wuthering Waves'),
-        ('OPTION_UnityCPUPreSkinning', 'Unity-CPU-PreSkinning', 'Unity Engine CPU-PreSkinning games')
-    ]
+    items = []
+    launcher_path = load_catter_launcher_path()
+    games_path = os.path.join(launcher_path, "Games")
+    gamename_list = os.listdir(games_path)
+    for gamename in gamename_list:
+        items.append(("OPTION_" + gamename,gamename,gamename))
+
     return items
-
-
-
-
 
 
 class DrawIBInputOperator(bpy.types.Operator):
@@ -72,7 +54,6 @@ class DrawIBInputOperator(bpy.types.Operator):
         return {'FINISHED'}
     
 
-
 class ExtractModelOperator(bpy.types.Operator):
     bl_idname = "catter.extract_model"
     bl_label = "Extract Model"
@@ -83,7 +64,6 @@ class ExtractModelOperator(bpy.types.Operator):
         return {'FINISHED'}
     
 
-
 class GenerateModOperator(bpy.types.Operator):
     bl_idname = "catter.generate_mod"
     bl_label = "Generate Mod"
@@ -91,4 +71,39 @@ class GenerateModOperator(bpy.types.Operator):
     def execute(self, context):
         bpy.ops.mesh.primitive_cube_add(size=2, enter_editmode=False, align='WORLD', location=(0, 0, 0))
         self.report({'INFO'}, "Generate Mod Success.")
+        return {'FINISHED'}
+    
+
+class DBMTProperties(bpy.types.PropertyGroup):
+    path: bpy.props.StringProperty(
+        name="Launcher",
+        description="Choose catter launcher path",
+        default=load_catter_launcher_path(),
+        subtype='DIR_PATH'
+    ) # type: ignore
+
+    export_same_number: bpy.props.BoolProperty(
+        name="Export Object With Same Number As It's Import",
+        description="Export doesn't change number",
+        default=False
+    ) # type: ignore
+
+    flip_tangent_w:bpy.props.BoolProperty(
+        name="",
+        description="翻转TANGENT的W分量",
+        default=False
+    ) # type: ignore
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.subtype = 'DIR_PATH'
+        self.path = load_catter_launcher_path()
+
+
+class CatterLauncherPathOperator(bpy.types.Operator):
+    bl_idname = "catter.select_launcher_folder"
+    bl_label = "Select Folder"
+
+    def execute(self, context):
+        bpy.ops.ui.directory_dialog('INVOKE_DEFAULT', directory=context.scene.mmt_props.path)
         return {'FINISHED'}

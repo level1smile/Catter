@@ -3,6 +3,39 @@ import bpy
 from .panel_functions import *
 from ..migoto.migoto_utils import *
 
+class CatterConfigUI(bpy.types.Panel):
+    bl_label = "Config"
+    bl_idname = "CATTER_PT_CONFIG_UI"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'Catter'
+
+    def draw(self, context):
+        layout = self.layout
+
+        # Path button to choose DBMT-GUI.exe location folder.
+        layout.prop(context.scene.mmt_props, "path")
+
+        # 获取DBMT.exe的路径
+        dbmt_gui_exe_path = os.path.join(context.scene.mmt_props.path, "DBMT-GUI.exe")
+        if not os.path.exists(dbmt_gui_exe_path):
+            layout.label(text="错误:请选择DBMT-GUI.exe所在路径 ", icon='ERROR')
+        
+        current_game = get_current_game_from_main_json()
+        if current_game != "":
+            layout.label(text="Current Game: " + current_game)
+        else:
+            layout.label(text="错误:请选择DBMT-GUI.exe所在路径 ", icon='ERROR')
+
+        
+        layout.prop(context.scene.mmt_props, "export_same_number", text="Keep Same Vertex Number at Export.")
+
+        # flip_tangent_w
+        layout.prop(context.scene.mmt_props, "flip_tangent_w", text="Flip TANGENT.w")
+
+
+        # row.operator("my.create_cube", text="Create Cube")
+
 
 class CatterModelUI(bpy.types.Panel):
     bl_label = "Model"
@@ -15,67 +48,21 @@ class CatterModelUI(bpy.types.Panel):
         layout = self.layout
 
         row = layout.row()
+        row.prop(context.scene, 'catter_game_name_enum')
+
+        row = layout.row()
         row.prop(context.scene, "catter_drawib_input")
 
         row = layout.row()
         row.operator("catter.extract_model", text="Extract Model")
 
-       
-class CatterConfigUI(bpy.types.Panel):
-    bl_label = "Config"
-    bl_idname = "CATTER_PT_CONFIG_UI"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = 'Catter'
-
-    def draw(self, context):
-        layout = self.layout
-
         row = layout.row()
-        row.prop(context.scene, 'catter_game_name_enum')
-        # row.operator("my.create_cube", text="Create Cube")
+        row.operator("catter.generate_mod", text="Generate Mod")
 
 
-class DBMTProperties(bpy.types.PropertyGroup):
-    path: bpy.props.StringProperty(
-        name="主路径",
-        description="选择DBMT的主路径",
-        default=load_mmt_path(),
-        subtype='DIR_PATH'
-    ) # type: ignore
-
-    export_same_number: bpy.props.BoolProperty(
-        name="Export Object With Same Number As It's Import",
-        description="Export doesn't change number",
-        default=False
-    ) # type: ignore
-
-    flip_tangent_w:bpy.props.BoolProperty(
-        name="",
-        description="翻转TANGENT的W分量",
-        default=False
-    ) # type: ignore
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.subtype = 'DIR_PATH'
-        self.path = load_mmt_path()
-
-
-class MMTPathOperator(bpy.types.Operator):
-    bl_idname = "mmt.select_folder"
-    bl_label = "Select Folder"
-
-    def execute(self, context):
-        # 在这里处理文件夹选择逻辑
-        bpy.ops.ui.directory_dialog('INVOKE_DEFAULT', directory=context.scene.mmt_props.path)
-        return {'FINISHED'}
-
-
-# MMT的侧边栏
-class MMTPanel(bpy.types.Panel):
-    bl_label = "DBMT" 
-    bl_idname = "VIEW3D_PT_DBMT_panel"
+class IOPanel(bpy.types.Panel):
+    bl_label = "IO" 
+    bl_idname = "VIEW3D_PT_CATTER_IO_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'Catter'
@@ -84,33 +71,12 @@ class MMTPanel(bpy.types.Panel):
         layout = self.layout
         props = context.scene.mmt_props
         
-        # Path button to choose DBMT-GUI.exe location folder.
-        layout.prop(props, "path")
-
-        # 获取DBMT.exe的路径
-        dbmt_gui_exe_path = os.path.join(props.path, "DBMT-GUI.exe")
-        if not os.path.exists(dbmt_gui_exe_path):
-            layout.label(text="错误:请选择DBMT-GUI.exe所在路径 ", icon='ERROR')
-        
-        main_json_path = props.path
-        current_game = get_current_game_from_main_json()
-        if current_game != "":
-            layout.label(text="当前游戏: " + current_game)
-        else:
-            layout.label(text="错误:请选择DBMT-GUI.exe所在路径 ", icon='ERROR')
 
         # Get output folder path.
         output_folder_path = get_output_folder_path()
 
-        # 绘制一个CheckBox用来存储是否导出相同顶点数
-        layout.separator()
-        layout.prop(props, "export_same_number", text="导出不改变顶点数")
-
-        # flip_tangent_w
-        layout.prop(props, "flip_tangent_w", text="翻转TANGENT的W分量")
 
         # 分隔符
-        layout.separator()
         layout.label(text="在OutputFolder中导入或导出")
 
         # 手动导入buf文件
@@ -121,6 +87,7 @@ class MMTPanel(bpy.types.Panel):
         operator_export_ibvb = self.layout.operator("export_mesh.migoto_mmt", text="导出 .ib & .vb 模型文件")
         operator_export_ibvb.filepath = output_folder_path + "1.vb"
 
+        current_game = get_current_game_from_main_json()
         # hoyogames use new architecture so can't use old import export method.
         if current_game not in ["HI3","GI","HSR","ZZZ","Unity-CPU-PreSkinning"]:
             # 添加分隔符
