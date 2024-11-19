@@ -30,6 +30,8 @@ register_classes = (
 
     # Model UI
     CatterModelUI,
+    # Buffer IO UI
+    BufferIOPanel,
 
     # Extract Model
     ExtractModelOperator,
@@ -41,7 +43,7 @@ register_classes = (
     # migoto
     DBMTProperties,
     CatterLauncherPathOperator,
-    IOPanel,
+    MigotoIOPanelDeprecated,
 
     # 3Dmigoto ib和vb格式导入导出
     Import3DMigotoRaw,

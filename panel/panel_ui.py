@@ -55,8 +55,19 @@ class CatterModelUI(bpy.types.Panel):
         row.operator("catter.generate_mod", text="Generate Mod")
 
 
-class IOPanel(bpy.types.Panel):
-    bl_label = "IO" 
+class BufferIOPanel(bpy.types.Panel):
+    bl_label = "Buffer IO" 
+    bl_idname = "VIEW3D_PT_CATTER_Buffer_IO_panel"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'Catter'
+
+    def draw(self, context):
+        layout = self.layout
+
+
+class MigotoIOPanelDeprecated(bpy.types.Panel):
+    bl_label = "3Dmigoto(Deprecated)" 
     bl_idname = "VIEW3D_PT_CATTER_IO_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -67,7 +78,6 @@ class IOPanel(bpy.types.Panel):
 
         # Get output folder path.
         output_folder_path = get_output_folder_path()
-
 
         # 分隔符
         layout.label(text="在OutputFolder中导入或导出")

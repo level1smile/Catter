@@ -15,11 +15,20 @@ from .frame_analysis import *
 @dataclass
 class DrawIBConfig:
     DrawIB:str
-
+    GameTypeName:str
     
+    ImportModelList:list[str] = field(init=False)
+    VertexLimitHash:str = field(init=False)
+    DrawIBOutputFolder:str = field(init=False)
+
+    Category_FileName_Dict:Dict[str,str] =  field(init=False)
+    Category_Hash_Dict:Dict[str,str] = field(init=False)
+    MatchFirstIndex_PartName_Dict:Dict[str,str] = field(init=False)
 
     def __post_init__(self):
-        pass
+        self.Category_FileName_Dict = {}
+        self.Category_Hash_Dict = {}
+        self.MatchFirstIndex_PartName_Dict = {}
 
 
 @dataclass
@@ -28,7 +37,6 @@ class GlobalConfig:
     GameName:str
     # This folder contains all 3dmigoto loader seperated by game name.
     GameLoaderPath:str
-
     # This folder contains all config json file.
     ConfigFolderPath:str
 
@@ -39,7 +47,9 @@ class GlobalConfig:
     # path of 3Dmigoto's d3d11.dll located folder + current work frame analysis folder.
     WorkFolder:str = field(init=False)
     # deduped folder path of current frame analysis folder.
-    DedupedFolder:str= field(init=False)
+    DedupedFolder:str = field(init=False)
+    # output folder
+    OutputFolder:str = field(init=False)
 
     # wrapper config for all d3d11 game type.
     D3D11GameTypeConfig:D3D11GameTypeLv2 = field(init=False,repr=False)
@@ -69,6 +79,9 @@ class GlobalConfig:
             
             self.FAData = FrameAnalysisData(WorkFolder=self.WorkFolder)
             self.FALog = FrameAnalysisLog(WorkFolder=self.WorkFolder)
+        self.OutputFolder = os.path.join(self.LoaderFolder,"Mods\\output\\")
+        # Create output folder.
+        os.makedirs(self.OutputFolder)
 
     def find_latest_frameanalysis_folder(self):
         frame_analysis_folder_list = []

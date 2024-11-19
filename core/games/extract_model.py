@@ -1,5 +1,7 @@
 from ..common.global_config import *
 
+import shutil
+
 def unity_auto_gametype(draw_ib:str,global_config:GlobalConfig):
     fadata = FrameAnalysisData(global_config.WorkFolder)
     falog = FrameAnalysisLog(global_config.WorkFolder)
@@ -123,7 +125,40 @@ def unity_extract_model(draw_ib_list,global_config:GlobalConfig):
 
         matched_game_type, trianglelist_extract_index, pointlist_extract_index = unity_auto_gametype(draw_ib=draw_ib,global_config=global_config)
         log_info("Matched GameType: " + matched_game_type)
+
+        draw_ib_config = DrawIBConfig(DrawIB=draw_ib,GameTypeName=matched_game_type)
+
+        # Create model extract output folder.
+        draw_ib_config.DrawIBOutputFolder = os.path.join(global_config.OutputFolder,draw_ib + "\\")
+        os.makedirs(draw_ib_config.DrawIBOutputFolder)
+
+        draw_ib_config.VertexLimitHash = fadata.filter_filename(trianglelist_extract_index + "-vb0",".buf")[0][11:19]
+
+        gametype = global_config.D3D11GameTypeConfig.GameTypeName_D3D11GameType_Dict[matched_game_type]
         
+        category_hash_dict = {}
+        category_filename_dict = {}
+        for category_name,category_slot in gametype.CategoryExtractSlotDict:
+            category_extract_technique = gametype.CategoryExtractTechniqueDict[category_name]
+
+            extract_index = trianglelist_extract_index
+            if category_extract_technique == "pointlist":
+                extract_index = pointlist_extract_index
+
+            buf_file_name = fadata.filter_filename(extract_index + "-" + category_slot,".buf")[0]
+            category_hash = buf_file_name[11:19]
+            category_hash_dict[category_name] = category_hash
+
+            category_read_file_path = os.path.join(fadata.WorkFolder, buf_file_name)
+            category_write_filename = draw_ib + "-" + category_name + ".buf"
+
+            category_write_file_path = os.path.join(draw_ib_config.DrawIBOutputFolder, category_write_filename)
+            shutil.copy2(category_read_file_path, category_write_file_path)
+
+        draw_ib_config.Category_Hash_Dict = category_hash_dict
+        draw_ib_config.Category_FileName_Dict = category_filename_dict
+
         
+
 
         
