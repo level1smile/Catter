@@ -81,7 +81,8 @@ class GlobalConfig:
             self.FALog = FrameAnalysisLog(WorkFolder=self.WorkFolder)
         self.OutputFolder = os.path.join(self.LoaderFolder,"Mods\\output\\")
         # Create output folder.
-        os.makedirs(self.OutputFolder)
+        if not os.path.exists(self.OutputFolder):
+            os.makedirs(self.OutputFolder)
 
     def find_latest_frameanalysis_folder(self):
         frame_analysis_folder_list = []

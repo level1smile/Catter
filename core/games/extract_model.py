@@ -61,7 +61,7 @@ def unity_auto_gametype(draw_ib:str,global_config:GlobalConfig):
             
             category_filename_list =  fadata.filter_filename(category_extract_index + "-" + category_slot, ".buf")
             if len(category_filename_list) == 0:
-                log_warning_str("can't find category_filename_list for: " + category_slot)
+                log_info("can't find category_filename_list for: " + category_slot)
                 all_category_match = False
                 break
 
@@ -73,14 +73,14 @@ def unity_auto_gametype(draw_ib:str,global_config:GlobalConfig):
 
             if category_vertex_count != vertex_count:
                 all_category_match = False
-                log_warning_str("categpry vertex count not match " + category_slot)
+                log_info("categpry vertex count not match " + category_slot)
                 break
         
         if all_category_match:
             log_warning_str("GameType Matched: " + gametype.GameTypeName)
             possible_gametype_list.append(gametype)
         else:
-            log_warning_str("not all category match")
+            log_info("not all category match")
         log_newline()
     
     log_info("all matched gametype:")
@@ -130,7 +130,8 @@ def unity_extract_model(draw_ib_list,global_config:GlobalConfig):
 
         # Create model extract output folder.
         draw_ib_config.DrawIBOutputFolder = os.path.join(global_config.OutputFolder,draw_ib + "\\")
-        os.makedirs(draw_ib_config.DrawIBOutputFolder)
+        if not os.path.exists(draw_ib_config.DrawIBOutputFolder):
+            os.makedirs(draw_ib_config.DrawIBOutputFolder)
 
         draw_ib_config.VertexLimitHash = fadata.filter_filename(trianglelist_extract_index + "-vb0",".buf")[0][11:19]
 
@@ -138,7 +139,7 @@ def unity_extract_model(draw_ib_list,global_config:GlobalConfig):
         
         category_hash_dict = {}
         category_filename_dict = {}
-        for category_name,category_slot in gametype.CategoryExtractSlotDict:
+        for category_name,category_slot in gametype.CategoryExtractSlotDict.items():
             category_extract_technique = gametype.CategoryExtractTechniqueDict[category_name]
 
             extract_index = trianglelist_extract_index
@@ -158,7 +159,7 @@ def unity_extract_model(draw_ib_list,global_config:GlobalConfig):
         draw_ib_config.Category_Hash_Dict = category_hash_dict
         draw_ib_config.Category_FileName_Dict = category_filename_dict
 
-        
+
 
 
         

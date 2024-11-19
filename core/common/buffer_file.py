@@ -40,6 +40,14 @@ class IndexBufferBufFile:
             unpacked_data = struct.unpack(f'<{count}{format_char}', byte_data[:count*stride])
         
         return list(unpacked_data)
+
+@dataclass
+class IndexBufferTxtFile:
+    FilePath:str
+
+
+    def __post_init__(self):
+        pass
     
 
 class VertexBufferBufFile:

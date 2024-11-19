@@ -25,8 +25,8 @@ def get_draw_ib_list(draw_ib_value:str) ->list:
         for draw_ib in drawib_splits:
             draw_ib_trim = draw_ib.strip()
             draw_ib_list.append(draw_ib_trim)
-    else:
-        draw_ib_list.append(draw_ib_value.strip())
+    elif draw_ib_value.strip() != "":
+            draw_ib_list.append(draw_ib_value.strip())
     return draw_ib_list
     
 
@@ -44,9 +44,12 @@ class ExtractModelOperator(bpy.types.Operator):
 
         # get draw ib list.
         draw_ib_list = get_draw_ib_list(context.scene.catter_drawib_input)
-
-        # call extract.
-        unity_extract_model(global_config=g,draw_ib_list=draw_ib_list)
+        if len(draw_ib_list) == 0:
+            # TODO add auto detect all draw_ib with pointlist index.
+            self.report({'ERROR'},"Please at least fill one DrawIB to extract.")
+        else:
+            # call extract.
+            unity_extract_model(global_config=g,draw_ib_list=draw_ib_list)
 
         self.report({'INFO'}, "Extract Model.")
         return {'FINISHED'}

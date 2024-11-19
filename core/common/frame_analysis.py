@@ -156,6 +156,15 @@ class FrameAnalysisData:
             if file_hash in deduped_filename:
                 return deduped_filename
         return ""
+    
+    def get_trianglelist_index_list(self,draw_ib:str)->list[str]:
+        for filename in self.FileNameList:
+            if not filename.endswith(".txt"):
+                continue
+            
+            if draw_ib in filename:
+                ib_txt_file = ""
+                # TODO 
 
 
 
