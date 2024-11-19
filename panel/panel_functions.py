@@ -2,46 +2,9 @@ import bpy
 import os
 import json
 
-
-def save_catter_launcher_path(path):
-    script_path = os.path.abspath(__file__)
-
-    plugin_directory = os.path.dirname(script_path)
-
-    config_path = os.path.join(plugin_directory, 'Config.json')
-
-    config = {'catter_launcher_path': bpy.context.scene.mmt_props.path}
-
-    json_data = json.dumps(config)
-
-    with open(config_path, 'w') as file:
-        file.write(json_data)
-
-
-def load_catter_launcher_path():
-    script_path = os.path.abspath(__file__)
-
-    plugin_directory = os.path.dirname(script_path)
-
-    config_path = os.path.join(plugin_directory, 'Config.json')
-
-    with open(config_path, 'r') as file:
-        json_data = file.read()
-
-    config = json.loads(json_data)
-
-    return config['catter_launcher_path']
-
-
-def game_items(self, context):
-    items = []
-    launcher_path = load_catter_launcher_path()
-    games_path = os.path.join(launcher_path, "Games")
-    gamename_list = os.listdir(games_path)
-    for gamename in gamename_list:
-        items.append(("OPTION_" + gamename,gamename,gamename))
-
-    return items
+from ..core.games.extract_model import *
+from ..migoto.migoto_utils import *
+from .panel_utils import *
 
 
 class DrawIBInputOperator(bpy.types.Operator):
@@ -52,15 +15,40 @@ class DrawIBInputOperator(bpy.types.Operator):
         input_value = context.scene.catter_drawib_input
         self.report({'INFO'}, f"Input 1: {input_value}")
         return {'FINISHED'}
+
+
+def get_draw_ib_list(draw_ib_value:str) ->list:
+    # get draw ib list.
+    draw_ib_list = []
+    if "," in draw_ib_value:
+        drawib_splits = draw_ib_value.split(",")
+        for draw_ib in drawib_splits:
+            draw_ib_trim = draw_ib.strip()
+            draw_ib_list.append(draw_ib_trim)
+    else:
+        draw_ib_list.append(draw_ib_value.strip())
+    return draw_ib_list
     
+
 
 class ExtractModelOperator(bpy.types.Operator):
     bl_idname = "catter.extract_model"
     bl_label = "Extract Model"
 
     def execute(self, context):
-        bpy.ops.mesh.primitive_cube_add(size=2, enter_editmode=False, align='WORLD', location=(0, 0, 0))
-        self.report({'INFO'}, "Cube created")
+        # combine global config.
+        current_game = get_current_game_from_main_json()
+        loader_path = os.path.join(bpy.context.scene.mmt_props.path,"Games\\" )
+        config_path = os.path.join(bpy.context.scene.mmt_props.path,"Configs\\ExtractTypes\\" + current_game + "\\")
+        g = GlobalConfig(GameName=current_game,GameLoaderPath=loader_path,ConfigFolderPath=config_path)
+
+        # get draw ib list.
+        draw_ib_list = get_draw_ib_list(context.scene.catter_drawib_input)
+
+        # call extract.
+        unity_extract_model(global_config=g,draw_ib_list=draw_ib_list)
+
+        self.report({'INFO'}, "Extract Model.")
         return {'FINISHED'}
     
 

@@ -5,9 +5,9 @@ from dataclasses import dataclass, field
 from typing import List,Dict
 from enum import Enum
 
-from ..utils.dbmt_file_utils import dbmt_fileutil__list_files
-from ..common.d3d11_game_type import D3D11GameType,D3D11Element,D3D11GameTypeLv2
-from ..utils.dbmt_log_utils import log_warning_str
+from ..utils.dbmt_file_utils import *
+from ..common.d3d11_game_type import *
+from ..utils.dbmt_log_utils import *
 
 # Nico: Thanks for SpectrumQT's WWMI project, I learned how to use @dataclass to save my time 
 # and lots of other python features so use python can works as good as C++ and better and faster.
@@ -93,8 +93,27 @@ class FrameAnalysisLog:
 
     LogFilePath:str = field(init=False)
 
+    LogLineList:list[str] = field(init=False)
+
     def __post_init__(self):
         self.LogFilePath = os.path.join(self.WorkFolder,"log.txt")
+        with open(self.LogFilePath, 'r') as file:
+            self.LogLineList = file.readlines()
+    
+    def get_index_list_by_draw_ib(self,draw_ib:str,only_match_first:bool)->list[str]:
+        index_set = set()
+        current_index = ""
+        for log_line in self.LogLineList:
+            if log_line.startswith("00"):
+                current_index = log_line[0:6]
+            
+            if "hash=" + draw_ib in log_line:
+                index_set.add(current_index)
+                if only_match_first:
+                    break
+        index_list = list(index_set)
+        index_list.sort()
+        return index_list
 
 
 
@@ -104,6 +123,7 @@ class GlobalConfig:
     GameName:str
     # This folder contains all 3dmigoto loader seperated by game name.
     GameLoaderPath:str
+
     # This folder contains all config json file.
     ConfigFolderPath:str
 
@@ -123,7 +143,6 @@ class GlobalConfig:
     FALog:FrameAnalysisLog = field(init=False,repr=False)
 
     def __post_init__(self):
-
         self.initialize_folder_path()
         self.initialize_d3d11_gametype()
 
@@ -137,7 +156,7 @@ class GlobalConfig:
             log_warning_str("Latest FrameAnalysis folder not found. WorkFolder will not exists.")
         else:
             self.WorkFolder = os.path.join(self.LoaderFolder, self.FrameAnalysisFolder + "\\") 
-            log_warning_str("Current WorkFolder: " + self.WorkFolder)
+            log_info("Current WorkFolder: " + self.WorkFolder)
 
             self.DedupedFolder =os.path.join(self.WorkFolder, "deduped\\")
             if not os.path.exists(self.DedupedFolder):
@@ -165,5 +184,4 @@ class GlobalConfig:
             return ""
 
     def initialize_d3d11_gametype(self):
-        gametype_folder_path = os.path.join(self.ConfigFolderPath, "gametypes\\" + self.GameName + "\\")
-        self.D3D11GameTypeConfig = D3D11GameTypeLv2(GameTypeConfigFolderPath=gametype_folder_path)
+        self.D3D11GameTypeConfig = D3D11GameTypeLv2(GameTypeConfigFolderPath=self.ConfigFolderPath)

@@ -25,7 +25,7 @@ def log_info(input):
         for something in input:
             print(something)
     else:
-        print(input)
+        print("\033[32m" + input + "\033[0m")
 
 
 
