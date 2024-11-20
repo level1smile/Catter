@@ -106,7 +106,7 @@ class RecalculateCOLORWithVectorNormalizedNormal(bpy.types.Operator):
  
 class CatterRightClickMenu(bpy.types.Menu):
     bl_idname = "VIEW3D_MT_object_3Dmigoto"
-    bl_label = "Catter"
+    bl_label = "3Dmigoto"
     
     def draw(self, context):
         layout = self.layout
