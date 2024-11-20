@@ -13,6 +13,8 @@ from .buffer.buffer_export import *
 from .buffer.animation_operator import *
 
 
+
+
 bl_info = {
     "name": "Catter",
     "description": "A blender plugin for game mod with 3Dmigoto.",
@@ -36,8 +38,6 @@ register_classes = (
     # Extract Model
     ExtractModelOperator,
     GenerateModOperator,
-    # DrawIB TextBox
-    DrawIBInputOperator,
 
 
     # migoto
@@ -96,6 +96,14 @@ def catter_define_properties():
         description="Choose a work game",
         items=game_items
     )
+
+    bpy.types.Scene.catter_game_type_enum = bpy.props.EnumProperty(
+        name="DataType",
+        description="Choose a data type",
+        items=get_game_types
+    )
+
+    
 
     bpy.types.Scene.mmt_props = bpy.props.PointerProperty(type=DBMTProperties)
 

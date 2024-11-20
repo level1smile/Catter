@@ -24,7 +24,7 @@ class CatterConfigUI(bpy.types.Panel):
         row = layout.row()
         row.prop(context.scene, 'catter_game_name_enum')
 
-        
+
         layout.prop(context.scene.mmt_props, "export_same_number", text="Keep Same Vertex Number.")
 
         # flip_tangent_w
@@ -47,6 +47,10 @@ class CatterModelUI(bpy.types.Panel):
         
         row = layout.row()
         row.prop(context.scene, "catter_drawib_input")
+
+        row = layout.row()
+        row.prop(context.scene, 'catter_game_type_enum')
+        # catter_game_type_enum
 
         row = layout.row()
         row.operator("catter.extract_model", text="Extract Model")

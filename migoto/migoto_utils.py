@@ -100,20 +100,20 @@ def format_size(fmt):
 
 
 # Read Main.json from DBMT folder and then get current game name.
-# def get_current_game_from_main_json(in_path="") ->str:
-#     current_game = ""
-#     if in_path == "":
-#         in_path = bpy.context.scene.mmt_props.path
+def get_current_game_from_main_json(in_path="") ->str:
+    current_game = ""
+    if in_path == "":
+        in_path = bpy.context.scene.mmt_props.path
 
-#     main_setting_path = os.path.join(in_path, "Configs\\Main.json")
-#     # print(main_setting_path)
-#     if os.path.exists(main_setting_path):
-#         main_setting_file = open(main_setting_path)
-#         main_setting_json = json.load(main_setting_file)
-#         main_setting_file.close()
-#         current_game = main_setting_json["GameName"]
-#     # print(current_game)
-#     return current_game
+    main_setting_path = os.path.join(in_path, "Configs\\Main.json")
+    # print(main_setting_path)
+    if os.path.exists(main_setting_path):
+        main_setting_file = open(main_setting_path)
+        main_setting_json = json.load(main_setting_file)
+        main_setting_file.close()
+        current_game = main_setting_json["GameName"]
+    # print(current_game)
+    return current_game
 
 
 # Get current output folder.

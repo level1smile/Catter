@@ -2,9 +2,14 @@ from ..common.global_config import *
 
 import shutil
 
+
 def unity_auto_gametype(draw_ib:str,global_config:GlobalConfig):
     fadata = FrameAnalysisData(global_config.WorkFolder)
     falog = FrameAnalysisLog(global_config.WorkFolder)
+
+    # get pointlist index by draw ib.
+    trianglelist_index_list= falog.get_index_list_by_draw_ib(draw_ib=draw_ib,only_match_first=False)
+    pointlist_extract_index = falog.get_pointlist_index_by_draw_ib(draw_ib=draw_ib)
 
     # auto detect game type
     possible_gametype_list:list[D3D11GameType] = []
@@ -23,8 +28,6 @@ def unity_auto_gametype(draw_ib:str,global_config:GlobalConfig):
         detect_slot = gametype.CategoryExtractSlotDict[detect_category]
         detect_stride = gametype.CategoryStrideDict[detect_category]
 
-        trianglelist_index_list= falog.get_index_list_by_draw_ib(draw_ib=draw_ib,only_match_first=False)
-
         trianglelist_extract_index = ""
         vertex_count = 0
         for trianglelist_index in trianglelist_index_list:
@@ -38,7 +41,7 @@ def unity_auto_gametype(draw_ib:str,global_config:GlobalConfig):
             trianglelist_extract_index = trianglelist_index
             break
         
-        pointlist_extract_index = falog.get_pointlist_index_by_draw_ib(draw_ib=draw_ib)
+        
 
         # log_info("Trianglelist Extract Index: " + trianglelist_extract_index)
         # log_info("Pointlist Extract Index: " + pointlist_extract_index)

@@ -7,30 +7,6 @@ from ..migoto.migoto_utils import *
 from .panel_utils import *
 
 
-class DrawIBInputOperator(bpy.types.Operator):
-    bl_idname = "catter.drawib_input"
-    bl_label = "DrawIB Input"
-
-    def execute(self, context):
-        input_value = context.scene.catter_drawib_input
-        self.report({'INFO'}, f"Input 1: {input_value}")
-        return {'FINISHED'}
-
-
-def get_draw_ib_list(draw_ib_value:str) ->list:
-    # get draw ib list.
-    draw_ib_list = []
-    if "," in draw_ib_value:
-        drawib_splits = draw_ib_value.split(",")
-        for draw_ib in drawib_splits:
-            draw_ib_trim = draw_ib.strip()
-            draw_ib_list.append(draw_ib_trim)
-    elif draw_ib_value.strip() != "":
-            draw_ib_list.append(draw_ib_value.strip())
-    return draw_ib_list
-    
-
-
 class ExtractModelOperator(bpy.types.Operator):
     bl_idname = "catter.extract_model"
     bl_label = "Extract Model"
@@ -87,8 +63,6 @@ class DBMTProperties(bpy.types.PropertyGroup):
 
     def __init__(self) -> None:
         super().__init__()
-        self.subtype = 'DIR_PATH'
-        self.path = load_catter_launcher_path()
 
 
 class CatterLauncherPathOperator(bpy.types.Operator):
