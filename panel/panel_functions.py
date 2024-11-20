@@ -2,7 +2,7 @@ import bpy
 import os
 import json
 
-from ..core.games.extract_model import *
+from ..core.games.extract_model_unity import *
 from ..migoto.migoto_utils import *
 from .panel_utils import *
 
