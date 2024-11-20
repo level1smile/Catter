@@ -1,12 +1,13 @@
 # Catter
-A blender plugin for game mod with 3Dmigoto.
 
-# Development Environment
+DBMT的Blender插件
+
+# 开发环境
 - Visual Studio Code
 - Python 3.12.7
 - Blender 4.2 LTS
 
-# Special Thanks 
+# 特别鸣谢 & 参考资料
 - Chiri https://github.com/bo3b/3Dmigoto
 - DarkStarSword https://github.com/DarkStarSword/3d-fixes
 - SilentNightSound,Leotorrez: https://github.com/SilentNightSound/GI-Model-Importer

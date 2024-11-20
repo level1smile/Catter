@@ -103,7 +103,7 @@ def format_size(fmt):
 def get_current_game_from_main_json(in_path="") ->str:
     current_game = ""
     if in_path == "":
-        in_path = bpy.context.scene.mmt_props.path
+        in_path = bpy.context.scene.dbmt.path
 
     main_setting_path = os.path.join(in_path, "Configs\\Main.json")
     # print(main_setting_path)
@@ -118,20 +118,21 @@ def get_current_game_from_main_json(in_path="") ->str:
 
 # Get current output folder.
 def get_output_folder_path() -> str:
-    mmt_path = bpy.context.scene.mmt_props.path
-    current_game = bpy.context.scene.catter_game_name_enum
+    mmt_path = bpy.context.scene.dbmt.path
+
+    current_game = get_current_game_from_main_json()
     output_folder_path = mmt_path + "Games\\" + current_game + "\\3Dmigoto\\Mods\\output\\"
     return output_folder_path
 
 
-# Get mmt path from bpy.context.scene.mmt_props.path.
+
 def get_mmt_path()->str:
-    return bpy.context.scene.mmt_props.path
+    return bpy.context.scene.dbmt.path
 
 
 # Get Games\\xxx\\Config.json path.
 def get_game_config_json_path()->str:
-    return os.path.join(bpy.context.scene.mmt_props.path, "Games\\" + bpy.context.scene.catter_game_name_enum + "\\Config.json")
+    return os.path.join(bpy.context.scene.dbmt.path, "Games\\" + bpy.context.scene.catter_game_name_enum + "\\Config.json")
 
 
 # Get drawib list from Game's Config.json.

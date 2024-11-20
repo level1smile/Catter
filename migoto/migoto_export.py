@@ -46,7 +46,7 @@ def blender_vertex_to_3dmigoto_vertex(mesh, obj, blender_loop_vertex, layout:Inp
 
         elif elem.name.startswith('TANGENT'):
             # Nico: Unity games need to flip TANGENT.w to get perfect shadow.
-            if bpy.context.scene.mmt_props.flip_tangent_w:
+            if bpy.context.scene.dbmt.flip_tangent_w:
                 vertex[elem.name] = elem.pad(list(blender_loop_vertex.tangent), -1 * blender_loop_vertex.bitangent_sign)
             else:
                 vertex[elem.name] = elem.pad(list(blender_loop_vertex.tangent), blender_loop_vertex.bitangent_sign)
@@ -131,7 +131,7 @@ class HashableVertex(dict):
 
 def export_3dmigoto(operator, context, vb_path, ib_path, fmt_path):
 
-    operator.report({'INFO'}, "导出是否保持相同顶点数：" + str(bpy.context.scene.mmt_props.export_same_number))
+    operator.report({'INFO'}, "导出是否保持相同顶点数：" + str(bpy.context.scene.dbmt.export_same_number))
     # 获取当前场景中的obj对象
     obj = context.object
 
@@ -217,7 +217,7 @@ def export_3dmigoto(operator, context, vb_path, ib_path, fmt_path):
                 这样就能得到每个Position对应的平均切线，在切线值相同的情况下，就不会产生额外的多余顶点了。
                 这里我选择简单的使用这个顶点第一次出现的TANGENT作为它的TANGENT，以此避免产生额外多余顶点的问题，后续可以优化为使用平均值作为TANGENT
             '''
-            if bpy.context.scene.mmt_props.export_same_number:
+            if bpy.context.scene.dbmt.export_same_number:
                 if "POSITION" in vertex and "NORMAL" in vertex and "TANGENT" in vertex :
                     if tuple(vertex["POSITION"] + vertex["NORMAL"]  ) in unique_position_vertices:
                         tangent_var = unique_position_vertices[tuple(vertex["POSITION"] + vertex["NORMAL"])]
