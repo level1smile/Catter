@@ -2,6 +2,7 @@
 import struct
 import bpy.props
 
+from ..ui.panel_ui import *
 from datetime import datetime
 
 
