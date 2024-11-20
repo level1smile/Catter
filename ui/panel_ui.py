@@ -3,88 +3,12 @@ import os
 import json
 
 from ..migoto.migoto_utils import *
+from .ui_utils import *
 
-
-
-def save_dbmt_path(path):
-    # 获取当前脚本文件的路径
-    script_path = os.path.abspath(__file__)
-
-    # 获取当前插件的工作目录
-    plugin_directory = os.path.dirname(script_path)
-
-    # 构建保存文件的路径
-    config_path = os.path.join(plugin_directory, 'Config.json')
-
-    # 创建字典对象
-    config = {'dbmt_path': bpy.context.scene.mmt_props.path}
-
-    # 将字典对象转换为 JSON 格式的字符串
-    json_data = json.dumps(config)
-
-    # 保存到文件
-    with open(config_path, 'w') as file:
-        file.write(json_data)
-
-
-def load_dbmt_path():
-    # 获取当前脚本文件的路径
-    script_path = os.path.abspath(__file__)
-
-    # 获取当前插件的工作目录
-    plugin_directory = os.path.dirname(script_path)
-
-    # 构建配置文件的路径
-    config_path = os.path.join(plugin_directory, 'Config.json')
-
-    # 读取文件
-    with open(config_path, 'r') as file:
-        json_data = file.read()
-
-    # 将 JSON 格式的字符串解析为字典对象
-    config = json.loads(json_data)
-
-    # 读取保存的路径
-    return config['dbmt_path']
-
-
-
-class CatterProperties(bpy.types.PropertyGroup):
-    path: bpy.props.StringProperty(
-        name="主路径",
-        description="选择DBMT的主路径",
-        default=load_dbmt_path(),
-        subtype='DIR_PATH'
-    ) # type: ignore
-
-    export_same_number: bpy.props.BoolProperty(
-        name="Export Object With Same Number As It's Import",
-        description="Export doesn't change number",
-        default=False
-    ) # type: ignore
-
-    flip_tangent_w:bpy.props.BoolProperty(
-        name="",
-        description="翻转TANGENT的W分量",
-        default=False
-    ) # type: ignore
-
-    def __init__(self) -> None:
-        super().__init__()
-        # self.subtype = 'DIR_PATH'
-
-
-# class CatterLauncherPathOperator(bpy.types.Operator):
-#     bl_idname = "catter.select_launcher_folder"
-#     bl_label = "Select Folder"
-
-#     def execute(self, context):
-#         bpy.ops.ui.directory_dialog('INVOKE_DEFAULT', directory=context.scene.dbmt.path)
-#         return {'FINISHED'}
 
 
 class CatterConfigUI(bpy.types.Panel):
-    bl_label = "Config"
+    bl_label = "基础配置"
     bl_idname = "CATTER_PT_CONFIG_UI"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -102,14 +26,14 @@ class CatterConfigUI(bpy.types.Panel):
             layout.label(text="错误:请选择DBMT-GUI.exe所在路径 ", icon='ERROR')
         
         row = layout.row()
-        row.label(text="Current Game: " + get_current_game_from_main_json())
+        row.label(text="当前游戏: " + get_current_game_from_main_json())
 
-        layout.prop(context.scene.dbmt, "export_same_number", text="Keep Same Vertex Number.")
-        layout.prop(context.scene.dbmt, "flip_tangent_w", text="Flip TANGENT.w")
+        layout.prop(context.scene.dbmt, "export_same_number", text="导出不改变顶点数")
+        layout.prop(context.scene.dbmt, "flip_tangent_w", text="翻转TANGENT的w分量")
 
 
-class MigotoIOPanelDeprecated(bpy.types.Panel):
-    bl_label = "3Dmigoto" 
+class MigotoIOPanel(bpy.types.Panel):
+    bl_label = "导入/导出" 
     bl_idname = "VIEW3D_PT_CATTER_IO_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'

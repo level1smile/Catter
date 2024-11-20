@@ -1,4 +1,4 @@
-from .mesh_functions import *
+from .ui_utils import *
 
 
 class RemoveUnusedVertexGroupOperator(bpy.types.Operator):

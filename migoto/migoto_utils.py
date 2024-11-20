@@ -132,7 +132,8 @@ def get_mmt_path()->str:
 
 # Get Games\\xxx\\Config.json path.
 def get_game_config_json_path()->str:
-    return os.path.join(bpy.context.scene.dbmt.path, "Games\\" + bpy.context.scene.catter_game_name_enum + "\\Config.json")
+    current_game =  get_current_game_from_main_json()
+    return os.path.join(bpy.context.scene.dbmt.path, "Games\\" + current_game + "\\Config.json")
 
 
 # Get drawib list from Game's Config.json.
