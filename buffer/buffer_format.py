@@ -1,18 +1,14 @@
 # Learned from ShaderFreedom discord @Aiden
-
-import math
 import bpy
 import struct
-import itertools
-import re
 import bmesh
-
+import os
+import json
+import time
 
 # This used to catch any exception in run time and raise it to blender output console.
 class Fatal(Exception):
     pass
-
-
 
 import math
 import bpy
@@ -224,14 +220,14 @@ def import_vertex_groups(mesh, obj, blend_indices, blend_weights, component=None
         if vertex.index in vertex_weight_map and vertex.index in connected_vertex_ids:
             for idx, weight in vertex_weight_map[vertex.index]:
                 group_map[idx].add([vertex.index], weight, 'REPLACE')
-    for vg in obj.vertex_groups:
-        num_vertices = sum(1 for v in mesh.vertices if vertex_weight_map.get(v.index, []))
-        print(f"Vertex Group '{vg.name}' has {num_vertices} vertices assigned.")
+    
+    # 这个执行大概要花10秒作用。
+    # for vg in obj.vertex_groups:
+    #     num_vertices = sum(1 for v in mesh.vertices if vertex_weight_map.get(v.index, []))
+    #     print(f"Vertex Group '{vg.name}' has {num_vertices} vertices assigned.")
 
 
 def apply_normals(obj, mesh, normals):
-    bpy.context.view_layer.objects.active = obj
-    bpy.ops.object.mode_set(mode='OBJECT')
     if len(normals) != len(mesh.vertices):
         raise ValueError("Number of normals must match the number of vertices.")
     
@@ -259,7 +255,6 @@ def apply_normals(obj, mesh, normals):
     bpy.ops.mesh.faces_shade_smooth()
     bpy.ops.object.mode_set(mode='OBJECT')
     
-    obj.data.update()
 
 
 def import_shapekeys(obj, shapekey_offsets, shapekey_vertex_ids, shapekey_vertex_offsets, scale_factor=1.0):
@@ -328,10 +323,10 @@ def import_shapekeys(obj, shapekey_offsets, shapekey_vertex_ids, shapekey_vertex
 
                     
 def create_mesh_from_buffers(vertices, indices, texcoords, color0, color1, object_data, blend_weights, blend_indices, normals,tangents, shapekey_offsets, shapekey_vertex_ids, shapekey_vertex_offsets,component=None):
-    flip_texcoord_v = False  # Set this to True if V should be flipped
-
+    flip_texcoord_v = False  
+   
     for i, (count, start_index) in enumerate(object_data):
-        # Create the mesh and object
+        
         mesh = bpy.data.meshes.new(name=f"Component {i}")
         obj = bpy.data.objects.new(name=f"Component {i}", object_data=mesh)
         bpy.context.collection.objects.link(obj)
@@ -343,7 +338,7 @@ def create_mesh_from_buffers(vertices, indices, texcoords, color0, color1, objec
 
         faces = [(indices[j], indices[j+1], indices[j+2]) for j in range(start_index, end_index - 2, 3)]
         mesh.from_pydata(vertices, [], faces)
-        mesh.update()
+        # mesh.update()
 
         if color0:
             color_layer0 = mesh.vertex_colors.new(name="COLOR")
@@ -368,9 +363,64 @@ def create_mesh_from_buffers(vertices, indices, texcoords, color0, color1, objec
             import_vertex_groups(mesh, obj, blend_indices, blend_weights, component)
         apply_normals(obj, mesh, normals)
 
+
         import_shapekeys(obj,shapekey_offsets, shapekey_vertex_ids, shapekey_vertex_offsets)
 
-        print(f"Mesh {i} created successfully.")
+        bpy.context.view_layer.objects.active = obj
+        # 获取选中的网格对象
+        bpy.ops.object.mode_set(mode='EDIT')
+        # 选择所有的顶点
+        bpy.ops.mesh.select_all(action='SELECT')
+        # 执行删除孤立顶点操作
+        bpy.ops.mesh.delete_loose()
+        # 切换回对象模式
+        bpy.ops.object.mode_set(mode='OBJECT')
+        mesh.update()
+
+
    
 
 
+def read_buffer_json(operator,format_json_path:str):
+    # 读取IndexCount MatchFirstIndex
+    with open(format_json_path, 'r', encoding='utf-8') as file:
+        json_data = json.load(file)
+    matchfirstindex_indexcount_map:dict[str,str] = json_data["MatchFirstIndex_IndexCount_Map"]
+    object_data = []
+    for match_first_index, index_count in matchfirstindex_indexcount_map.items():
+        object_data.append((int(index_count),int(match_first_index)))
+
+    # 记录开始时间
+    start_time = time.time()
+
+    base_path = os.path.dirname(format_json_path)
+    position_buf_path = base_path + '/Position.buf'
+    index_buf_path = base_path + '/Index.buf'
+    texcoord_buf_path = base_path + '/Texcoord.buf'
+    color_buf_path = base_path + '/Color.buf'
+    blend_buf_path = base_path + '/Blend.buf'
+    vector_buf_path = base_path + '/Vector.buf'
+    shape_key_offset_file = base_path + '/ShapeKeyOffset.buf'
+    shape_key_vertex_id_file = base_path + '/ShapeKeyVertexId.buf'
+    shape_key_vertex_offset_file = base_path + '/ShapeKeyVertexOffset.buf'
+
+  
+
+    # object_data = extract_drawindexed_values(ini_file_path) # if mod has weird toggles add drawindeces manually
+    vertices = read_position_buffer(position_buf_path)
+    indices = read_index_buffer(index_buf_path)
+    texcoords0, texcoords1, texcoords2, color1 = read_texcoord_buffer(texcoord_buf_path)
+    color0 = read_color_buffer(color_buf_path)
+    blend_indices, blend_weights = read_blend_buffer(blend_buf_path)
+    tangents, normals = read_vector_buffer(vector_buf_path)    
+    texcoords = [texcoords0, texcoords1, texcoords2]
+    shapekey_offsets = read_shape_key_offset(shape_key_offset_file)
+    shapekey_vertex_ids = read_shape_key_vertex_id(shape_key_vertex_id_file)
+    shapekey_vertex_offsets = read_shape_key_vertex_offset(shape_key_vertex_offset_file)
+
+    # 记录结束时间
+    end_time = time.time()
+    execution_time = end_time - start_time
+    print(f"读取耗时: {execution_time:.6f} 秒")
+    
+    create_mesh_from_buffers(vertices, indices, texcoords, color0, color1, object_data, blend_weights, blend_indices, normals, tangents, shapekey_offsets, shapekey_vertex_ids, shapekey_vertex_offsets)

@@ -1,9 +1,10 @@
 # 导入其它文件依赖
-from .buffer_format_Analysis_TMP import *
+from .buffer_format import *
 from .buffer_utils import *
 
 # 导入用到的包
 import os
+import time
 import json
 from enum import Enum
 from array import array
@@ -138,43 +139,6 @@ def read_buffer_and_combine_obj(operator,format_json_path:str):
 
 
 
-def read_buffer_json(operator,format_json_path:str):
-    # 读取IndexCount MatchFirstIndex
-    with open(format_json_path, 'r', encoding='utf-8') as file:
-        json_data = json.load(file)
-    matchfirstindex_indexcount_map:dict[str,str] = json_data["MatchFirstIndex_IndexCount_Map"]
-    object_data = []
-    for match_first_index, index_count in matchfirstindex_indexcount_map.items():
-        object_data.append((int(index_count),int(match_first_index)))
-
-    # TODO 导入一个要执行14秒，太慢了
-    base_path = os.path.dirname(format_json_path)
-    position_buf_path = base_path + '/Position.buf'
-    index_buf_path = base_path + '/Index.buf'
-    texcoord_buf_path = base_path + '/Texcoord.buf'
-    color_buf_path = base_path + '/Color.buf'
-    blend_buf_path = base_path + '/Blend.buf'
-    vector_buf_path = base_path + '/Vector.buf'
-    shape_key_offset_file = base_path + '/ShapeKeyOffset.buf'
-    shape_key_vertex_id_file = base_path + '/ShapeKeyVertexId.buf'
-    shape_key_vertex_offset_file = base_path + '/ShapeKeyVertexOffset.buf'
-
-
-
-    # object_data = extract_drawindexed_values(ini_file_path) # if mod has weird toggles add drawindeces manually
-    
-    vertices = read_position_buffer(position_buf_path)
-    indices = read_index_buffer(index_buf_path)
-    texcoords0, texcoords1, texcoords2, color1 = read_texcoord_buffer(texcoord_buf_path)
-    color0 = read_color_buffer(color_buf_path)
-    blend_indices, blend_weights = read_blend_buffer(blend_buf_path)
-    tangents, normals = read_vector_buffer(vector_buf_path)    
-    texcoords = [texcoords0, texcoords1, texcoords2]
-    shapekey_offsets = read_shape_key_offset(shape_key_offset_file)
-    shapekey_vertex_ids = read_shape_key_vertex_id(shape_key_vertex_id_file)
-    shapekey_vertex_offsets = read_shape_key_vertex_offset(shape_key_vertex_offset_file)
-    
-    create_mesh_from_buffers(vertices, indices, texcoords, color0, color1, object_data, blend_weights, blend_indices, normals, tangents, shapekey_offsets, shapekey_vertex_ids, shapekey_vertex_offsets)
 
 
 class Import_DBMT_Buffer(bpy.types.Operator, ImportHelper):
@@ -187,6 +151,8 @@ class Import_DBMT_Buffer(bpy.types.Operator, ImportHelper):
     flip_texcoord_v: BoolProperty(name="Flip TEXCOORD V", description="Flip TEXCOORD V asix during importing", default=True,) # type: ignore
 
     def execute(self, context):
+        # 记录开始时间
+        start_time = time.time()
         # 因为ImportHelper会可以选择多个文件，self.filepath总是会获取最后一个文件的路径，这样我们通过os.path.dirname()就可以获取到它的目录了
         # self.report({'INFO'}, "Self.FilePath: " + self.filepath)
         # Self.FilePath: C:\Users\Administrator\Desktop\DBMT\Games\HI3_NEW\3Dmigoto\Mods\output\7b4e1855\7b4e1855-HI3_GPU_T01.json
@@ -194,27 +160,20 @@ class Import_DBMT_Buffer(bpy.types.Operator, ImportHelper):
 
         # 获取导入的目录的文件夹名称
         collection_name = os.path.basename(dirpath)
-
-        # 创建一个集合
-        collection = bpy.data.collections.new(collection_name)
-
-        # 把集合链接到当前场景上
-        bpy.context.scene.collection.children.link(collection)
-        # self.report({'INFO'}, "Import " + filename.name)
-
         for filename in self.files:
             # 根据之前获取的目录，我们这里就可以根据获取每个文件的路径了，因为在VSCode里是没有filename.之后的智能提示的，这样获取比较安全
             json_file_path = os.path.join(dirpath, filename.name)
             
             # 解析并读取Buffer文件中的数据，返回一个obj对象
-            obj_results = read_buffer_json(self,json_file_path)
+            read_buffer_json(self,json_file_path)
 
-            # 遍历每一个obj对象，并链接到集合中
-            for obj in obj_results:
-                # 因为之前导入的过程中可能已经链接到scene了，所以必选在这里先断开链接否则会出现两个实例
-                # bpy.context.scene.collection.objects.unlink(obj)
-                # 再链接到集合，就能显示在集合下面了
-                collection.objects.link(obj)
+        # 记录结束时间
+        end_time = time.time()
+
+        # 计算执行时间
+        execution_time = end_time - start_time
+
+        print(f"代码执行时间: {execution_time:.6f} 秒")
 
         return {'FINISHED'}
     
