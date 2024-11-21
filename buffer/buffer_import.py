@@ -138,6 +138,45 @@ def read_buffer_and_combine_obj(operator,format_json_path:str):
 
 
 
+def read_buffer_json(operator,format_json_path:str):
+    # 读取IndexCount MatchFirstIndex
+    with open(format_json_path, 'r', encoding='utf-8') as file:
+        json_data = json.load(file)
+    matchfirstindex_indexcount_map:dict[str,str] = json_data["MatchFirstIndex_IndexCount_Map"]
+    object_data = []
+    for match_first_index, index_count in matchfirstindex_indexcount_map.items():
+        object_data.append((int(index_count),int(match_first_index)))
+
+    # TODO 导入一个要执行14秒，太慢了
+    base_path = os.path.dirname(format_json_path)
+    position_buf_path = base_path + '/Position.buf'
+    index_buf_path = base_path + '/Index.buf'
+    texcoord_buf_path = base_path + '/Texcoord.buf'
+    color_buf_path = base_path + '/Color.buf'
+    blend_buf_path = base_path + '/Blend.buf'
+    vector_buf_path = base_path + '/Vector.buf'
+    shape_key_offset_file = base_path + '/ShapeKeyOffset.buf'
+    shape_key_vertex_id_file = base_path + '/ShapeKeyVertexId.buf'
+    shape_key_vertex_offset_file = base_path + '/ShapeKeyVertexOffset.buf'
+
+
+
+    # object_data = extract_drawindexed_values(ini_file_path) # if mod has weird toggles add drawindeces manually
+    
+    vertices = read_position_buffer(position_buf_path)
+    indices = read_index_buffer(index_buf_path)
+    texcoords0, texcoords1, texcoords2, color1 = read_texcoord_buffer(texcoord_buf_path)
+    color0 = read_color_buffer(color_buf_path)
+    blend_indices, blend_weights = read_blend_buffer(blend_buf_path)
+    tangents, normals = read_vector_buffer(vector_buf_path)    
+    texcoords = [texcoords0, texcoords1, texcoords2]
+    shapekey_offsets = read_shape_key_offset(shape_key_offset_file)
+    shapekey_vertex_ids = read_shape_key_vertex_id(shape_key_vertex_id_file)
+    shapekey_vertex_offsets = read_shape_key_vertex_offset(shape_key_vertex_offset_file)
+    
+    create_mesh_from_buffers(vertices, indices, texcoords, color0, color1, object_data, blend_weights, blend_indices, normals, tangents, shapekey_offsets, shapekey_vertex_ids, shapekey_vertex_offsets)
+
+
 class Import_DBMT_Buffer(bpy.types.Operator, ImportHelper):
     bl_idname = "import_mesh.dbmt_buffer"
     bl_label = "导入DBMT原始Buffer文件"
@@ -168,7 +207,7 @@ class Import_DBMT_Buffer(bpy.types.Operator, ImportHelper):
             json_file_path = os.path.join(dirpath, filename.name)
             
             # 解析并读取Buffer文件中的数据，返回一个obj对象
-            obj_results = read_buffer_and_combine_obj(self,json_file_path)
+            obj_results = read_buffer_json(self,json_file_path)
 
             # 遍历每一个obj对象，并链接到集合中
             for obj in obj_results:

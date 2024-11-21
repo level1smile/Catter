@@ -21,45 +21,6 @@ import itertools
 import re
 import bmesh
 
-def extract_drawindexed_values(ini_file):
-    object_data = []
-    with open(ini_file, 'r') as file:
-        lines = file.readlines()
-    
-    current_component = None
-    component_sums = {}
-    
-    for line in lines:
-        line = line.strip()
-        
-        if line.startswith('; Draw Component'):
-            component_number = extract_component_number(line)
-            if component_number is not None:
-                current_component = component_number
-                if current_component not in component_sums:
-                    component_sums[current_component] = (0, None)
-        
-        if line.startswith('drawindexed'):
-            values = re.findall(r'\d+', line)
-            if len(values) >= 2:
-                value1 = int(values[0])
-                value2 = int(values[1])
-                if current_component is not None:
-                    current_sum, existing_second_value = component_sums[current_component]
-                    component_sums[current_component] = (current_sum + value1, existing_second_value if existing_second_value is not None else value2)
-    
-    for component_number, (sum_value, second_value) in component_sums.items():
-        if second_value is not None:
-            object_data.append((sum_value, second_value))
-    
-    return object_data
-
-def extract_component_number(line):
-    # Find the part after "; Draw Component"
-    match = re.search(r'; Draw Component\s+(\d+)', line)
-    if match:
-        return int(match.group(1))
-    return None
 
 def read_position_buffer(file_path):
     vertices = []
@@ -69,6 +30,7 @@ def read_position_buffer(file_path):
             vertices.append((x, y, z))
     return vertices
 
+
 def read_index_buffer(file_path):
     indices = []
     with open(file_path, 'rb') as f:
@@ -76,6 +38,7 @@ def read_index_buffer(file_path):
             index = struct.unpack('<I', chunk)[0]
             indices.append(index)
     return indices
+
 
 def read_vector_buffer(file_path):
     tangents = []
@@ -91,6 +54,7 @@ def read_vector_buffer(file_path):
                 nx, ny, nz, nw = struct.unpack('<4b', chunk[4:8])
                 normals.append((nx / 127.0, ny / 127.0, nz / 127.0, nw / 127.0))
     return tangents, normals
+
 
 def read_texcoord_buffer(file_path):
     texcoords0 = []
@@ -112,6 +76,7 @@ def read_texcoord_buffer(file_path):
     
     return texcoords0, texcoords1, texcoords2, color1
 
+
 def read_color_buffer(file_path):
     color0 = []
     with open(file_path, 'rb') as f:
@@ -119,6 +84,7 @@ def read_color_buffer(file_path):
             r, g, b, a = struct.unpack('<4B', chunk)
             color0.append((r / 255.0, g / 255.0, b / 255.0, a / 255.0))
     return color0
+
 
 def read_blend_buffer(file_path):
     blend_indices = []
@@ -133,6 +99,7 @@ def read_blend_buffer(file_path):
     blend_weights = normalize_weights(blend_weights)
     return blend_indices, blend_weights
 
+
 def normalize_weights(weights):
     normalized_weights = []
     for weight_set in weights:
@@ -142,6 +109,7 @@ def normalize_weights(weights):
         else:
             normalized_weights.append(weight_set)  # Avoid division by zero
     return normalized_weights
+
 
 def read_shape_key_offset(file_path):
     with open(file_path, 'rb') as file:
@@ -219,6 +187,7 @@ def import_uv_layers(mesh, texcoords):
 
             print(f"UV Layer '{uv_name}' imported successfully.")
 
+
 def import_vertex_groups(mesh, obj, blend_indices, blend_weights, component=None):
     if len(blend_indices) != len(blend_weights):
         raise ValueError("Mismatch between blend_indices and blend_weights lengths")
@@ -267,7 +236,6 @@ def apply_normals(obj, mesh, normals):
         raise ValueError("Number of normals must match the number of vertices.")
     
     # https://docs.blender.org/api/3.6/bpy.types.Mesh.html#bpy.types.Mesh.normals_split_custom_set_from_vertices
-    # 这里避免了create_normal_splits()的使用
     mesh.normals_split_custom_set_from_vertices([normal[:3] for normal in normals])
     mesh.update()
     
@@ -283,10 +251,6 @@ def apply_normals(obj, mesh, normals):
     bpy.ops.object.mode_set(mode='OBJECT')
     obj.data.update()
     
-    # 但是这里调用了calc_normals_split()
-    mesh.calc_normals_split()
-    mesh.update()
-    
     # 调用faces_shade_smooth()设置自动平滑着色
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
@@ -297,12 +261,6 @@ def apply_normals(obj, mesh, normals):
     
     obj.data.update()
 
-def apply_tangents(mesh, tangents):
-    if len(tangents) != len(mesh.vertices):
-        raise ValueError("Number of tangents must match the number of vertices.")
-    if not mesh.uv_layers:
-        mesh.uv_layers.new(name="TANGENT")
-    mesh.update()
 
 def import_shapekeys(obj, shapekey_offsets, shapekey_vertex_ids, shapekey_vertex_offsets, scale_factor=1.0):
     if len(shapekey_offsets) == 0:
@@ -408,45 +366,11 @@ def create_mesh_from_buffers(vertices, indices, texcoords, color0, color1, objec
         import_uv_layers(mesh, texcoords)
         if blend_weights and blend_indices:
             import_vertex_groups(mesh, obj, blend_indices, blend_weights, component)
-        apply_tangents(mesh, tangents)
         apply_normals(obj, mesh, normals)
-        # Remove loose vertices
+
         import_shapekeys(obj,shapekey_offsets, shapekey_vertex_ids, shapekey_vertex_offsets)
-        bpy.context.view_layer.objects.active = obj
-        bpy.ops.object.mode_set(mode='EDIT')
-        bpy.ops.mesh.delete_loose()
-        bpy.ops.object.mode_set(mode='OBJECT')
-        obj.scale = (0.01, 0.01, 0.01)
-        obj.rotation_euler[2] = math.radians(180)
 
         print(f"Mesh {i} created successfully.")
-# def main():
-#     # Paths to the .buf files
-#     base_path = 'F:/WuwaMods/Mods/changlimod/'
-#     position_buf_path = base_path + '/meshes/Position.buf'
-#     index_buf_path = base_path + '/meshes/index.buf'
-#     texcoord_buf_path = base_path + '/meshes/Texcoord.buf'
-#     color_buf_path = base_path + '/meshes/color.buf'
-#     blend_buf_path = base_path + '/meshes/blend.buf'
-#     vector_buf_path = base_path + '/meshes/Vector.buf'
-#     shape_key_offset_file = base_path + '/meshes/ShapeKeyOffset.buf'
-#     shape_key_vertex_id_file = base_path + '/meshes/ShapeKeyVertexId.buf'
-#     shape_key_vertex_offset_file = base_path + '/meshes/ShapeKeyVertexOffset.buf'
-#     ini_file_path = base_path + 'mod.ini'
-#     object_data = extract_drawindexed_values(ini_file_path) # if mod has weird toggles add drawindeces manually
-    
-#     vertices = read_position_buffer(position_buf_path)
-#     indices = read_index_buffer(index_buf_path)
-#     texcoords0, texcoords1, texcoords2, color1 = read_texcoord_buffer(texcoord_buf_path)
-#     color0 = read_color_buffer(color_buf_path)
-#     blend_indices, blend_weights = read_blend_buffer(blend_buf_path)
-#     tangents, normals = read_vector_buffer(vector_buf_path)    
-#     texcoords = [texcoords0, texcoords1, texcoords2]
-#     shapekey_offsets = read_shape_key_offset(shape_key_offset_file)
-#     shapekey_vertex_ids = read_shape_key_vertex_id(shape_key_vertex_id_file)
-#     shapekey_vertex_offsets = read_shape_key_vertex_offset(shape_key_vertex_offset_file)
-    
-#     create_mesh_from_buffers(vertices, indices, texcoords, color0, color1, object_data, blend_weights, blend_indices, normals, tangents, shapekey_offsets, shapekey_vertex_ids, shapekey_vertex_offsets)
-
+   
 
 

@@ -80,4 +80,19 @@ class MigotoIOPanel(bpy.types.Panel):
 
 
 
-        
+class BufferIOPanel(bpy.types.Panel):
+    bl_label = "Buffer IO" 
+    bl_idname = "VIEW3D_PT_CATTER_Buffer_IO_panel"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'Catter'
+
+    def draw(self, context):
+        layout = self.layout
+
+        # Get output folder path.
+        output_folder_path = get_output_folder_path()
+
+        # import_mesh.dbmt_buffer
+        operator_buffer_import = self.layout.operator("import_mesh.dbmt_buffer", text="导入Buffer文件")
+        operator_buffer_import.filepath = output_folder_path

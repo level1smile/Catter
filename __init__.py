@@ -85,7 +85,8 @@ register_classes = (
 
     # UI
     CatterConfigUI,
-    MigotoIOPanel
+    MigotoIOPanel,
+    BufferIOPanel
     
 )
 
