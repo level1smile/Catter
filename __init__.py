@@ -7,18 +7,15 @@ from .ui.rightclick_ui import *
 from .migoto.migoto_import import *
 from .migoto.migoto_export import *
 
-from .buffer.buffer_import import *
-from .buffer.buffer_export import *
-from .buffer.animation_operator import *
-
 
 bl_info = {
     "name": "Catter",
     "description": "A blender plugin for game mod with 3Dmigoto.",
     "blender": (4, 2, 3),
-    "version": (1, 0, 0),
+    "version": (1, 0, 2, 2),
     "location": "View3D",
-    "category": "Generic"
+    "category": "Generic",
+    "tracker_url":"https://github.com/StarBobis/Catter"
 }
 
 
@@ -54,17 +51,12 @@ register_classes = (
     # 3Dmigoto ib和vb格式导入导出
     Import3DMigotoRaw,
     Export3DMigoto,
-    # 新的Buffer格式导入导出
-    Import_DBMT_Buffer,
     # MMT的一键快速导入导出
     MMTImportAllVbModel,
     MMTExportAllIBVBModel,
     # 多合一的一键快速导入导出
     DBMTImportAllVbModelMerged,
     DBMTExportMergedModVBModel,
-
-    # MMD类型动画Mod支持
-    MMDModIniGenerator,
 
     # 右键菜单栏
     RemoveUnusedVertexGroupOperator,
@@ -86,8 +78,6 @@ register_classes = (
     # UI
     CatterConfigUI,
     MigotoIOPanel,
-    BufferIOPanel
-    
 )
 
 

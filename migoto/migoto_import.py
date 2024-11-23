@@ -12,6 +12,33 @@ from bpy.props import BoolProperty, StringProperty, CollectionProperty
 from bpy_extras.io_utils import orientation_helper
 
 
+def import_shapekeys(mesh, obj, shapekeys):
+    # Credit to SpectrumQT: https://github.com/SpectrumQT/WWMI-TOOLS
+    if len(shapekeys.keys()) == 0:
+        return
+    
+    # Add basis shapekey
+    basis_shapekey = obj.shape_key_add(name='Basis')
+    basis_shapekey.interpolation = 'KEY_LINEAR'
+
+    # Set shapekeys to relative 'cause WuWa uses this type
+    obj.data.shape_keys.use_relative = True
+
+    # Import shapekeys
+    for shapekey_id in shapekeys.keys():
+        # Add new shapekey
+        shapekey = obj.shape_key_add(name=f'Deform {shapekey_id}')
+        shapekey.interpolation = 'KEY_LINEAR'
+
+        # Apply shapekey vertex position offsets to each indexed vertex
+        shapekey_data = shapekeys[shapekey_id]
+        for vertex_id in range(len(obj.data.vertices)):
+            position_offset = shapekey_data[vertex_id]
+            shapekey.data[vertex_id].co.x += position_offset[0]
+            shapekey.data[vertex_id].co.y += position_offset[1]
+            shapekey.data[vertex_id].co.z += position_offset[2]
+
+
 def import_vertex_groups(mesh, obj, blend_indices, blend_weights):
     assert (len(blend_indices) == len(blend_weights))
     if blend_indices:
@@ -86,6 +113,7 @@ def import_vertices(mesh, vb: VertexBuffer):
     blend_indices = {}
     blend_weights = {}
     texcoords = {}
+    shapekeys = {}
     vertex_layers = {}
     use_normals = False
 
@@ -141,6 +169,10 @@ def import_vertices(mesh, vb: VertexBuffer):
             blend_weights[elem.SemanticIndex] = data
         elif elem.name.startswith('TEXCOORD') and elem.is_float():
             texcoords[elem.SemanticIndex] = data
+        elif elem.name.startswith('SHAPEKEY') and elem.is_float():
+            # if elem.SemanticIndex not in shapekeys:
+            #     shapekeys[elem.SemanticIndex] = {}
+            shapekeys[elem.SemanticIndex] = data
         else:
             print('NOTICE: Storing unhandled semantic %s %s as vertex layer' % (elem.name, elem.Format))
             vertex_layers[elem.name] = data
@@ -279,11 +311,13 @@ def import_3dmigoto_raw_buffers(operator, context, fmt_path:str, vb_path:str, ib
     # post process for import data.
     import_faces_from_ib(mesh, ib)
 
-    (blend_indices, blend_weights, texcoords, vertex_layers, use_normals, normals) = import_vertices(mesh, vb)
+    (blend_indices, blend_weights, texcoords, vertex_layers, use_normals, normals, shapekeys) = import_vertices(mesh, vb)
 
     import_uv_layers(mesh, obj, texcoords, flip_texcoord_v)
 
     import_vertex_groups(mesh, obj, blend_indices, blend_weights)
+
+    import_shapekeys(mesh, obj, shapekeys)
 
     # Validate closes the loops so they don't disappear after edit mode and probably other important things:
     mesh.validate(verbose=False, clean_customdata=False)  
