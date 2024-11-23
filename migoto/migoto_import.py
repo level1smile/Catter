@@ -155,8 +155,8 @@ def import_vertices(mesh, vb: VertexBuffer):
             normals = [(x[0], x[1], x[2]) for x in data]
 
         elif elem.name in ('TANGENT', 'BINORMAL'):
-            # Nico: 不需要导入TANGENT，因为导出时会重新计算。
             pass
+            # Nico: 不需要导入TANGENT，因为导出时会重新计算。
             #    # XXX: loops.tangent is read only. Not positive how to handle
             #    # this, or if we should just calculate it when re-exporting.
             #    for l in mesh.loops:
@@ -325,9 +325,6 @@ def import_3dmigoto_raw_buffers(operator, context, fmt_path:str, vb_path:str, ib
     if use_normals:
         mesh.normals_split_custom_set_from_vertices(normals)
 
-    # 设置导入时的顶点数和索引数，用于插件右键对比是否和原本顶点数量一致
-    obj['3DMigoto:OriginalVertexNumber'] = len(mesh.vertices)
-    obj['3DMigoto:OriginalIndicesNumber'] = len(mesh.loops)
 
     # auto texture 
     create_material_with_texture(obj, mesh_name=mesh_name,directory= os.path.dirname(fmt_path))
