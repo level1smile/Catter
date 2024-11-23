@@ -170,14 +170,12 @@ def import_vertices(mesh, vb: VertexBuffer):
         elif elem.name.startswith('TEXCOORD') and elem.is_float():
             texcoords[elem.SemanticIndex] = data
         elif elem.name.startswith('SHAPEKEY') and elem.is_float():
-            # if elem.SemanticIndex not in shapekeys:
-            #     shapekeys[elem.SemanticIndex] = {}
             shapekeys[elem.SemanticIndex] = data
         else:
             print('NOTICE: Storing unhandled semantic %s %s as vertex layer' % (elem.name, elem.Format))
             vertex_layers[elem.name] = data
 
-    return (blend_indices, blend_weights, texcoords, vertex_layers, use_normals,normals)
+    return (blend_indices, blend_weights, texcoords, vertex_layers, use_normals,normals,shapekeys)
 
 
 def find_texture(texture_prefix, texture_suffix, directory):
