@@ -275,6 +275,8 @@ class VertexBuffer(object):
                 position_normal_dict[position_str] = normalized_normal
             else:
                 position_normal_dict[position_str] = normal
+
+        
         return position_normal_dict
     
     # Nico: 算数平均归一化法线，HI3 2.0角色使用的方法
@@ -309,6 +311,8 @@ class VertexBuffer(object):
         return sum(a * b for a, b in zip(v1, v2))
 
     # Nico: 米游所有游戏都能用到这个，还有曾经的GPU-PreSkinning的GF2也会用到这个，崩坏三2.0新角色除外。
+    # TODO 尽管这个可以起到相似的效果，但是仍然无法完美获取模型本身的TANGENT数据，只能做到99%近似。
+    # 经过测试，头发部分并不是简单的向量归一化，也不是算术平均归一化。
     def vector_normalized_normal_to_tangent(self):
         position_normal_dict = self.get_position_normalizednormal_dict(self.vertices)
         new_vertices = []
