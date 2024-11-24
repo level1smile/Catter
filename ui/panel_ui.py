@@ -29,7 +29,23 @@ class CatterConfigUI(bpy.types.Panel):
         row.label(text="当前游戏: " + get_current_game_from_main_json())
 
         layout.prop(context.scene.dbmt, "export_same_number", text="导出不改变顶点数")
-        layout.prop(context.scene.dbmt, "flip_tangent_w", text="翻转TANGENT的w分量")
+
+
+        layout.label(text="翻转NORMAL分量")
+        row = layout.row()
+       
+        row.prop(context.scene.dbmt, "flip_normal_x", text="X")
+        row.prop(context.scene.dbmt, "flip_normal_y", text="Y")
+        row.prop(context.scene.dbmt, "flip_normal_z", text="Z")
+        row.prop(context.scene.dbmt, "flip_normal_w", text="W")
+
+        layout.label(text="翻转TANGENT分量")
+        row = layout.row()
+       
+        row.prop(context.scene.dbmt, "flip_tangent_x", text="X")
+        row.prop(context.scene.dbmt, "flip_tangent_y", text="Y")
+        row.prop(context.scene.dbmt, "flip_tangent_z", text="Z")
+        row.prop(context.scene.dbmt, "flip_tangent_w", text="W")
 
 
 class MigotoIOPanel(bpy.types.Panel):

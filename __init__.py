@@ -39,6 +39,48 @@ class CatterProperties(bpy.types.PropertyGroup):
         default=False
     ) # type: ignore
 
+    flip_tangent_z:bpy.props.BoolProperty(
+        name="",
+        description="",
+        default=False
+    ) # type: ignore
+
+    flip_tangent_y:bpy.props.BoolProperty(
+        name="",
+        description="",
+        default=False
+    ) # type: ignore
+
+    flip_tangent_x:bpy.props.BoolProperty(
+        name="",
+        description="",
+        default=False
+    ) # type: ignore
+
+    flip_normal_w:bpy.props.BoolProperty(
+        name="",
+        description="",
+        default=False
+    ) # type: ignore
+
+    flip_normal_z:bpy.props.BoolProperty(
+        name="",
+        description="",
+        default=False
+    ) # type: ignore
+
+    flip_normal_y:bpy.props.BoolProperty(
+        name="",
+        description="",
+        default=False
+    ) # type: ignore
+
+    flip_normal_x:bpy.props.BoolProperty(
+        name="",
+        description="",
+        default=False
+    ) # type: ignore
+
     def __init__(self) -> None:
         super().__init__()
         # self.subtype = 'DIR_PATH'
