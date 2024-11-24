@@ -271,8 +271,8 @@ class VertexBuffer(object):
 
             normal = vertex["NORMAL"]
             if position_str in position_normal_dict:
-                # print("meet same position")
-                position_normal_dict[position_str] = self.add_and_normalize_vectors(normal,position_normal_dict[position_str])
+                normalized_normal = self.add_and_normalize_vectors(normal,position_normal_dict[position_str])
+                position_normal_dict[position_str] = normalized_normal
             else:
                 position_normal_dict[position_str] = normal
         return position_normal_dict
@@ -304,18 +304,40 @@ class VertexBuffer(object):
 
         return position_normal_dict
 
+    # 辅助函数：计算两个向量的点积
+    def dot_product(self,v1, v2):
+        return sum(a * b for a, b in zip(v1, v2))
+
     # Nico: 米游所有游戏都能用到这个，还有曾经的GPU-PreSkinning的GF2也会用到这个，崩坏三2.0新角色除外。
     def vector_normalized_normal_to_tangent(self):
         position_normal_dict = self.get_position_normalizednormal_dict(self.vertices)
         new_vertices = []
+
+
         for vertex in self.vertices:
             position = vertex["POSITION"]
             position_str = str(position[0]) + "_" + str(position[1]) + "_" + str(position[2])
             if position_str in position_normal_dict:
                 normalized_normal = position_normal_dict[position_str]
+
+                # 计算副切线
+                tangent = vertex["TANGENT"][:3]
+                binormal = self.vector_normalize([
+                    normalized_normal[1] * tangent[2] - normalized_normal[2] * tangent[1],
+                    normalized_normal[2] * tangent[0] - normalized_normal[0] * tangent[2],
+                    normalized_normal[0] * tangent[1] - normalized_normal[1] * tangent[0]
+                ])
+                # 确定W分量
+                w = 1.0 if self.dot_product(binormal, vertex.get("BINORMAL", [0, 0, 1])) >= 0.0 else -1.0
+                    
+                # 最终赋值
                 vertex["TANGENT"][0] = normalized_normal[0]
                 vertex["TANGENT"][1] = normalized_normal[1]
                 vertex["TANGENT"][2] = normalized_normal[2]
+                if bpy.context.scene.dbmt.flip_tangent_w:
+                    vertex["TANGENT"][3] = -1 * w
+                else:
+                    vertex["TANGENT"][3] = w
                 new_vertices.append(vertex)
 
         self.vertices = new_vertices
