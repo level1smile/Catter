@@ -231,9 +231,7 @@ def dbmt_run_command(command_str:str):
     # 运行一个外部的 .exe 文件
     result = subprocess.run([dbmt_core_path],cwd=dbmt_plugin_path)
 
-    # 检查返回码
-    if result.returncode == 0:
-        subprocess.run(['explorer',os.path.join(get_output_folder_path(),"GeneratedMod\\")])
+        
         
 def dbmt_get_run_result() -> str:
     dbmt_path = bpy.context.scene.dbmt.path
@@ -248,5 +246,8 @@ def dbmt_get_run_result() -> str:
 
 def dbmt_run_generate_mod() -> str:
     dbmt_run_command("split")
-    return dbmt_get_run_result()
+    run_result = dbmt_get_run_result()
+    if run_result == "success":
+        subprocess.run(['explorer',os.path.join(get_output_folder_path(),"GeneratedMod\\")])
+    return run_result
 
