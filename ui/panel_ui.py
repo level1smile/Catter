@@ -28,7 +28,7 @@ class CatterConfigUI(bpy.types.Panel):
         row = layout.row()
         row.label(text="当前游戏: " + get_current_game_from_main_json())
 
-        layout.prop(context.scene.dbmt, "export_same_number", text="导出不改变顶点数")
+
 
 
         layout.label(text="翻转NORMAL分量")
@@ -46,6 +46,9 @@ class CatterConfigUI(bpy.types.Panel):
         row.prop(context.scene.dbmt, "flip_tangent_y", text="Y")
         row.prop(context.scene.dbmt, "flip_tangent_z", text="Z")
         row.prop(context.scene.dbmt, "flip_tangent_w", text="W")
+        layout.separator()
+        layout.prop(context.scene.dbmt, "export_same_number", text="导出不改变顶点数")
+        layout.prop(context.scene.dbmt,"generate_mod_after_export",text="一键导出后自动生成二创模型")
 
 
 class MigotoIOPanel(bpy.types.Panel):

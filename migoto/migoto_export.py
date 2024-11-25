@@ -429,5 +429,13 @@ class DBMTExportMergedModVBModel(bpy.types.Operator):
                 self.report({'ERROR'}, "导出失败！请选择一个集合后再点一键导出！")
         else:
             self.report({'INFO'}, "一键导出成功！成功导出的部位数量：" + str(export_time))
+
+            # 调用生成二创模型方法。
+            if context.scene.dbmt.generate_mod_after_export:
+                result = dbmt_run_generate_mod()
+                if result == "success":
+                    self.report({'INFO'}, "生成二创模型成功!")
+                else:
+                    self.report({'ERROR'}, result)
         return {'FINISHED'}
     

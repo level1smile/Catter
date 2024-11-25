@@ -5,6 +5,7 @@ import struct
 import os
 import bpy
 import json
+import subprocess
 
 main_json_path = ""
 
@@ -209,4 +210,43 @@ def get_model_prefix_from_fmt_file(fmt_file_path:str)->str:
                 return line.split(':')[1].strip()  
     return ""  
 
+
+def dbmt_run_command(command_str:str):
+    dbmt_path = bpy.context.scene.dbmt.path
+
+    run_input_json_path = os.path.join(dbmt_path,"Configs\\RunInput.json")
+    run_input_dict = {"RunCommand":command_str}
+    run_input_json = json.dumps(run_input_dict)
+    with open(run_input_json_path, 'w') as run_input_json_file:
+        run_input_json_file.write(run_input_json)
+
+    run_result_json_path = os.path.join(dbmt_path,"Configs\\RunResult.json")
+    run_result_dict = {"result":"Unknown Error!"}
+    run_result_json = json.dumps(run_result_dict)
+    with open(run_result_json_path, 'w') as run_result_json_file:
+        run_result_json_file.write(run_result_json)
+
+    dbmt_plugin_path = os.path.join(dbmt_path,"Plugins\\")
+    dbmt_core_path = os.path.join(dbmt_plugin_path,"DBMT.exe")
+    # 运行一个外部的 .exe 文件
+    result = subprocess.run([dbmt_core_path],cwd=dbmt_plugin_path)
+
+    # 检查返回码
+    if result.returncode == 0:
+        subprocess.run(['explorer',os.path.join(get_output_folder_path(),"GeneratedMod\\")])
+        
+def dbmt_get_run_result() -> str:
+    dbmt_path = bpy.context.scene.dbmt.path
+    run_result_json_path = os.path.join(dbmt_path,"Configs\\RunResult.json")
+    with open(run_result_json_path, 'r', encoding='utf-8') as file:
+        run_result_json = json.load(file)
+    if "result" in run_result_json:
+        result = run_result_json["result"]
+        return result
+    else:
+        return "Unknown error lead to bad json format!"
+
+def dbmt_run_generate_mod() -> str:
+    dbmt_run_command("split")
+    return dbmt_get_run_result()
 

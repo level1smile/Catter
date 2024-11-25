@@ -12,7 +12,7 @@ bl_info = {
     "name": "Catter",
     "description": "A blender plugin for game mod with 3Dmigoto.",
     "blender": (4, 2, 3),
-    "version": (1, 0, 2, 2),
+    "version": (1, 0, 2, 3),
     "location": "View3D",
     "category": "Generic",
     "tracker_url":"https://github.com/StarBobis/Catter"
@@ -25,6 +25,12 @@ class CatterProperties(bpy.types.PropertyGroup):
         description="选择DBMT的主路径",
         default=load_dbmt_path(),
         subtype='DIR_PATH'
+    ) # type: ignore
+
+    generate_mod_after_export: bpy.props.BoolProperty(
+        name="",
+        description="",
+        default=False
     ) # type: ignore
 
     export_same_number: bpy.props.BoolProperty(
