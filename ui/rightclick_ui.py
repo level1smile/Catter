@@ -200,6 +200,7 @@ class WWMI_ApplyModifierForObjectWithShapeKeysOperator(bpy.types.Operator):
             item.checked = False
         return context.window_manager.invoke_props_dialog(self)
  
+ 
 class CatterRightClickMenu(bpy.types.Menu):
     bl_idname = "VIEW3D_MT_object_3Dmigoto"
     bl_label = "3Dmigoto"
