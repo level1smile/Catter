@@ -49,6 +49,8 @@ register_classes = (
     SplitMeshByCommonVertexGroup,
     RecalculateTANGENTWithVectorNormalizedNormal,
     RecalculateCOLORWithVectorNormalizedNormal,
+    WWMI_ApplyModifierForObjectWithShapeKeysOperator,
+    
     # Collection's right click menu item.
     Catter_MarkCollection_Switch,
     Catter_MarkCollection_Toggle,

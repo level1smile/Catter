@@ -1,4 +1,7 @@
 from ..utils.ui_utils import *
+from ..utils.shapekey_utils import apply_modifiers_for_object_with_shape_keys
+
+from bpy.props import BoolProperty,  CollectionProperty
 
 
 class RemoveAllVertexGroupOperator(bpy.types.Operator):
@@ -120,6 +123,81 @@ class RecalculateCOLORWithVectorNormalizedNormal(bpy.types.Operator):
                 self.report({'INFO'},"重计算COLOR设为:" + str(obj["3DMigoto:RecalculateCOLOR"]))
         return {'FINISHED'}
 
+
+
+
+class PropertyCollectionModifierItem(bpy.types.PropertyGroup):
+    # Code originally copied from WWMI to avoid make another wheel again and modified to better meet our needs.
+    # https://github.com/SpectrumQT/WWMI-TOOLS
+    # Credit to SpectrumQT and huge thanks for his hard work.
+    checked: BoolProperty(
+        name="", 
+        default=False
+    ) # type: ignore
+bpy.utils.register_class(PropertyCollectionModifierItem)
+
+class WWMI_ApplyModifierForObjectWithShapeKeysOperator(bpy.types.Operator):
+    # Code originally copied from WWMI to avoid make another wheel again and modified to better meet our needs.
+    # https://github.com/SpectrumQT/WWMI-TOOLS
+    # Credit to SpectrumQT and huge thanks for his hard work.
+    bl_idname = "wwmi_tools.apply_modifier_for_object_with_shape_keys"
+    bl_label = "Apply Modifiers For Object With Shape Keys"
+    bl_description = "Apply selected modifiers and remove from the stack for object with shape keys (Solves 'Modifier cannot be applied to a mesh with shape keys' error when pushing 'Apply' button in 'Object modifiers'). Sourced by Przemysław Bągard"
+ 
+    def item_list(self, context):
+        return [(modifier.name, modifier.name, modifier.name) for modifier in bpy.context.object.modifiers]
+    
+    my_collection: CollectionProperty(
+        type=PropertyCollectionModifierItem
+    ) # type: ignore
+    
+    disable_armatures: BoolProperty(
+        name="Don't include armature deformations",
+        default=True,
+    ) # type: ignore
+ 
+    def execute(self, context):
+        ob = bpy.context.object
+        bpy.ops.object.select_all(action='DESELECT')
+        context.view_layer.objects.active = ob
+        ob.select_set(True)
+        
+        selectedModifiers = [o.name for o in self.my_collection if o.checked]
+        
+        if not selectedModifiers:
+            self.report({'ERROR'}, 'No modifier selected!')
+            return {'FINISHED'}
+        
+        success, errorInfo = apply_modifiers_for_object_with_shape_keys(context, selectedModifiers, self.disable_armatures)
+        
+        if not success:
+            self.report({'ERROR'}, errorInfo)
+        
+        return {'FINISHED'}
+        
+    def draw(self, context):
+        if context.object.data.shape_keys and context.object.data.shape_keys.animation_data:
+            self.layout.separator()
+            self.layout.label(text="Warning:")
+            self.layout.label(text="              Object contains animation data")
+            self.layout.label(text="              (like drivers, keyframes etc.)")
+            self.layout.label(text="              assigned to shape keys.")
+            self.layout.label(text="              Those data will be lost!")
+            self.layout.separator()
+        #self.layout.prop(self, "my_enum")
+        box = self.layout.box()
+        for prop in self.my_collection:
+            box.prop(prop, "checked", text=prop["name"])
+        #box.prop(self, "my_collection")
+        self.layout.prop(self, "disable_armatures")
+ 
+    def invoke(self, context, event):
+        self.my_collection.clear()
+        for i in range(len(bpy.context.object.modifiers)):
+            item = self.my_collection.add()
+            item.name = bpy.context.object.modifiers[i].name
+            item.checked = False
+        return context.window_manager.invoke_props_dialog(self)
  
 class CatterRightClickMenu(bpy.types.Menu):
     bl_idname = "VIEW3D_MT_object_3Dmigoto"
@@ -138,9 +216,11 @@ class CatterRightClickMenu(bpy.types.Menu):
         layout.operator(MMTDeleteLoose.bl_idname)
         layout.operator(MMTResetRotation.bl_idname)
         layout.operator(SplitMeshByCommonVertexGroup.bl_idname)
+        layout.operator(WWMI_ApplyModifierForObjectWithShapeKeysOperator.bl_idname)
         layout.separator()
         layout.operator(RecalculateTANGENTWithVectorNormalizedNormal.bl_idname)
         layout.operator(RecalculateCOLORWithVectorNormalizedNormal.bl_idname)
+        
 
 
 def menu_func_migoto_right_click(self, context):
