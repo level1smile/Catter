@@ -2,8 +2,8 @@ import bpy
 import os
 import json
 
-from ..migoto.migoto_utils import *
-from .ui_utils import *
+from ..utils.migoto_utils import *
+from ..utils.ui_utils import *
 
 
 
@@ -49,6 +49,7 @@ class CatterConfigUI(bpy.types.Panel):
         layout.separator()
         layout.prop(context.scene.dbmt, "export_same_number", text="导出不改变顶点数")
         layout.prop(context.scene.dbmt,"generate_mod_after_export",text="一键导出后自动生成二创模型")
+        layout.prop(context.scene.dbmt,"import_merged_vgmap",text="使用重映射的全局顶点组")
 
 
 class MigotoIOPanel(bpy.types.Panel):

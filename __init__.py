@@ -7,89 +7,18 @@ from .ui.rightclick_ui import *
 from .migoto.migoto_import import *
 from .migoto.migoto_export import *
 
+from .config.catter_properties import *
+
 
 bl_info = {
     "name": "Catter",
     "description": "A blender plugin for game mod with 3Dmigoto.",
     "blender": (4, 2, 3),
-    "version": (1, 0, 2, 3),
+    "version": (1, 0, 2, 4),
     "location": "View3D",
     "category": "Generic",
     "tracker_url":"https://github.com/StarBobis/Catter"
 }
-
-
-class CatterProperties(bpy.types.PropertyGroup):
-    path: bpy.props.StringProperty(
-        name="主路径",
-        description="选择DBMT的主路径",
-        default=load_dbmt_path(),
-        subtype='DIR_PATH'
-    ) # type: ignore
-
-    generate_mod_after_export: bpy.props.BoolProperty(
-        name="",
-        description="",
-        default=False
-    ) # type: ignore
-
-    export_same_number: bpy.props.BoolProperty(
-        name="",
-        description="",
-        default=False
-    ) # type: ignore
-
-    flip_tangent_w:bpy.props.BoolProperty(
-        name="",
-        description="",
-        default=False
-    ) # type: ignore
-
-    flip_tangent_z:bpy.props.BoolProperty(
-        name="",
-        description="",
-        default=False
-    ) # type: ignore
-
-    flip_tangent_y:bpy.props.BoolProperty(
-        name="",
-        description="",
-        default=False
-    ) # type: ignore
-
-    flip_tangent_x:bpy.props.BoolProperty(
-        name="",
-        description="",
-        default=False
-    ) # type: ignore
-
-    flip_normal_w:bpy.props.BoolProperty(
-        name="",
-        description="",
-        default=False
-    ) # type: ignore
-
-    flip_normal_z:bpy.props.BoolProperty(
-        name="",
-        description="",
-        default=False
-    ) # type: ignore
-
-    flip_normal_y:bpy.props.BoolProperty(
-        name="",
-        description="",
-        default=False
-    ) # type: ignore
-
-    flip_normal_x:bpy.props.BoolProperty(
-        name="",
-        description="",
-        default=False
-    ) # type: ignore
-
-    def __init__(self) -> None:
-        super().__init__()
-        # self.subtype = 'DIR_PATH'
 
 
 register_classes = (

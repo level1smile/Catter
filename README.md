@@ -14,3 +14,5 @@ DBMT的Blender插件
 - SpectrumQT: https://github.com/SpectrumQT/WWMI-TOOLS
 - Leotorrez: https://github.com/leotorrez/XXMITools
 - SpectrumQT,SinsOfSeven: https://github.com/SinsOfSeven/3Dmigoto
+
+- WuWa mod format support special thanks for SpectrumQT's WWMI-Tools & WWMI project, whitout his pioneer work the wuwa support will be much more time consuming.

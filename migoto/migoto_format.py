@@ -1,4 +1,4 @@
-from .migoto_utils import *
+from ..utils.migoto_utils import *
 
 import io
 import textwrap

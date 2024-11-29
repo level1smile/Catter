@@ -10,6 +10,7 @@ import math
 from bpy_extras.io_utils import unpack_list, ImportHelper, axis_conversion
 from bpy.props import BoolProperty, StringProperty, CollectionProperty
 from bpy_extras.io_utils import orientation_helper
+from ..config.metadata_format import *
 
 
 def import_shapekeys(mesh, obj, shapekeys):
@@ -39,14 +40,35 @@ def import_shapekeys(mesh, obj, shapekeys):
             shapekey.data[vertex_id].co.z += position_offset[2]
 
 
-def import_vertex_groups(mesh, obj, blend_indices, blend_weights):
+def import_vertex_groups(mesh, obj, blend_indices, blend_weights,component):
+    # assert (len(blend_indices) == len(blend_weights))
+    # if blend_indices:
+    #     # We will need to make sure we re-export the same blend indices later -
+    #     # that they haven't been renumbered. Not positive whether it is better
+    #     # to use the vertex group index, vertex group name or attach some extra
+    #     # data. Make sure the indices and names match:
+    #     num_vertex_groups = max(itertools.chain(*itertools.chain(*blend_indices.values()))) + 1
+    #     for i in range(num_vertex_groups):
+    #         obj.vertex_groups.new(name=str(i))
+    #     for vertex in mesh.vertices:
+    #         for semantic_index in sorted(blend_indices.keys()):
+    #             for i, w in zip(blend_indices[semantic_index][vertex.index],
+    #                             blend_weights[semantic_index][vertex.index]):
+    #                 if w == 0.0:
+    #                     continue
+    #                 obj.vertex_groups[i].add((vertex.index,), w, 'REPLACE')
+
     assert (len(blend_indices) == len(blend_weights))
     if blend_indices:
         # We will need to make sure we re-export the same blend indices later -
         # that they haven't been renumbered. Not positive whether it is better
         # to use the vertex group index, vertex group name or attach some extra
         # data. Make sure the indices and names match:
-        num_vertex_groups = max(itertools.chain(*itertools.chain(*blend_indices.values()))) + 1
+        if component is None:
+            num_vertex_groups = max(itertools.chain(*itertools.chain(*blend_indices.values()))) + 1
+        else:
+            num_vertex_groups = max(component.vg_map.values()) + 1
+            vg_map = list(map(int, component.vg_map.values()))
         for i in range(num_vertex_groups):
             obj.vertex_groups.new(name=str(i))
         for vertex in mesh.vertices:
@@ -55,7 +77,10 @@ def import_vertex_groups(mesh, obj, blend_indices, blend_weights):
                                 blend_weights[semantic_index][vertex.index]):
                     if w == 0.0:
                         continue
-                    obj.vertex_groups[i].add((vertex.index,), w, 'REPLACE')
+                    if component is None:
+                        obj.vertex_groups[i].add((vertex.index,), w, 'REPLACE')
+                    else:
+                        obj.vertex_groups[vg_map[i]].add((vertex.index,), w, 'REPLACE')
 
 
 def import_uv_layers(mesh, obj, texcoords, flip_texcoord_v):
@@ -313,7 +338,19 @@ def import_3dmigoto_raw_buffers(operator, context, fmt_path:str, vb_path:str, ib
 
     import_uv_layers(mesh, obj, texcoords, flip_texcoord_v)
 
-    import_vertex_groups(mesh, obj, blend_indices, blend_weights)
+    # WWMI metadata.json, if contains then we can import merged vgmap.
+    metadatajsonpath = os.path.join(os.path.dirname(fmt_path),'Metadata.json')
+    component = None
+    if os.path.exists(metadatajsonpath):
+        print("导入")
+        extracted_object = read_metadata(metadatajsonpath)
+        component_pattern = re.compile(r'.*component[ -_]*([0-9]+).*')
+        result = component_pattern.findall(fmt_path.lower())
+        if bpy.context.scene.dbmt.import_merged_vgmap:
+            if len(result) == 1:
+                component = extracted_object.components[int(result[0])]
+
+    import_vertex_groups(mesh, obj, blend_indices, blend_weights, component)
 
     import_shapekeys(mesh, obj, shapekeys)
 
