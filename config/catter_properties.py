@@ -1,5 +1,6 @@
 import bpy
 
+from ..utils.vertexgroup_utils import *
 from ..utils.dbmt_utils import * 
 
 # 全局配置用起来和管理起来都很方便，跟SpectrumQT学的。
