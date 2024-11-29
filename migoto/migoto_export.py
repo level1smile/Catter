@@ -276,7 +276,8 @@ def export_3dmigoto(operator, context, vb_path, ib_path, fmt_path):
 class Export3DMigoto(bpy.types.Operator, ExportHelper):
     """Export a mesh for re-injection into a game with 3DMigoto"""
     bl_idname = "export_mesh.migoto_mmt"
-    bl_label = "Export 3DMigoto Vertex & Index Buffers (MMT)"
+    bl_label = "Export 3DMigoto Vertex & Index Buffers (DBMT)"
+    bl_description = "导出当前选中的模型，要求模型必须有3Dmigoto相关属性"
 
     # file extension
     filename_ext = '.vb'
@@ -309,6 +310,7 @@ class Export3DMigoto(bpy.types.Operator, ExportHelper):
 class MMTExportAllIBVBModel(bpy.types.Operator):
     bl_idname = "mmt.export_all"
     bl_label = "Export all .ib and .vb model to current OutputFolder"
+    bl_description = "一键导出当前集合中所有的模型到对应的DrawIB的文件夹中，命名为从1开始自增的数字"
 
     def execute(self, context):
         output_folder_path = get_output_folder_path()
@@ -353,6 +355,7 @@ class MMTExportAllIBVBModel(bpy.types.Operator):
 class DBMTExportMergedModVBModel(bpy.types.Operator):
     bl_idname = "mmt.export_all_merged"
     bl_label = "Export merged model to current OutputFolder"
+    bl_description = "一键导出当前分支架构集合中所有的模型到对应的DrawIB的文件夹中并生成Export.json，隐藏显示的模型不会被导出"
 
     def execute(self, context):
         output_folder_path = get_output_folder_path()

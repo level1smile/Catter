@@ -36,6 +36,7 @@ register_classes = (
     DBMTExportMergedModVBModel,
 
     # 右键菜单栏
+    RemoveAllVertexGroupOperator,
     RemoveUnusedVertexGroupOperator,
     MergeVertexGroupsWithSameNumber,
     FillVertexGroupGaps,

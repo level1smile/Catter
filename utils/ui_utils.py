@@ -49,6 +49,17 @@ def load_dbmt_path():
     return config['dbmt_path']
 
 
+def remove_all_vertex_groups(self,context):
+    # Copied from WWMI-Tools 
+    # https://github.com/SpectrumQT/WWMI-TOOLS
+    for obj in bpy.context.selected_objects:
+        if obj.type == "MESH":
+            for x in obj.vertex_groups:
+                obj.vertex_groups.remove(x)
+
+    return {'FINISHED'}
+
+
 def remove_unused_vertex_group(self, context):
     # Originally design from https://blenderartists.org/t/batch-delete-vertex-groups-script/449881/23
     # Copied from GIMI repository.

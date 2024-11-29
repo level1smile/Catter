@@ -339,6 +339,7 @@ def import_3dmigoto_raw_buffers(operator, context, fmt_path:str, vb_path:str, ib
     import_uv_layers(mesh, obj, texcoords, flip_texcoord_v)
 
     # WWMI metadata.json, if contains then we can import merged vgmap.
+    # TODO 这里每次导入都要读取一次，效率太低了
     metadatajsonpath = os.path.join(os.path.dirname(fmt_path),'Metadata.json')
     component = None
     if os.path.exists(metadatajsonpath):
@@ -386,6 +387,7 @@ class Import3DMigotoRaw(bpy.types.Operator, ImportHelper):
     """Import raw 3DMigoto vertex and index buffers"""
     bl_idname = "import_mesh.migoto_raw_buffers_mmt"
     bl_label = "导入3Dmigoto的原始Buffer文件"
+    bl_description = "导入3Dmigoto格式的 .ib .vb .fmt文件，只需选择.fmt文件即可"
 
     # new architecture only need .fmt file to locate.
     filename_ext = '.fmt'
@@ -474,6 +476,7 @@ class Import3DMigotoRaw(bpy.types.Operator, ImportHelper):
 class MMTImportAllVbModel(bpy.types.Operator):
     bl_idname = "mmt.import_all"
     bl_label = "Import all .ib .vb model from current OutputFolder"
+    bl_description = "一键导入当前output文件夹下所有的DrawIB对应的模型到各自的集合中"
 
     def execute(self, context):
         import_drawib_folder_path_list = get_import_drawib_folder_path_list()
@@ -523,6 +526,7 @@ class MMTImportAllVbModel(bpy.types.Operator):
 class DBMTImportAllVbModelMerged(bpy.types.Operator):
     bl_idname = "mmt.import_all_merged"
     bl_label = "Import all .ib .vb model from current OutputFolder,but merged sturcture."
+    bl_description = "一键导入当前output文件夹下所有的DrawIB对应的模型为分支集合架构"
 
     def execute(self, context):
         import_drawib_folder_path_list = get_import_drawib_folder_path_list()
