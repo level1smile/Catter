@@ -78,7 +78,7 @@ class MigotoIOPanel(bpy.types.Panel):
 
         current_game = get_current_game_from_main_json()
         # hoyogames use new architecture so can't use old import export method.
-        if current_game not in ["HI3","GI","HSR","ZZZ","Unity-CPU-PreSkinning","Game001"]:
+        if current_game not in ["HI3","GI","HSR","ZZZ","Unity-CPU-PreSkinning","Game001","LiarsBar"]:
             # 添加分隔符
             layout.separator()
             layout.label(text="该游戏支持仍在测试中", icon='ERROR')
