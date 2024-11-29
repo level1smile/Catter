@@ -1,4 +1,8 @@
 from .migoto_format import *
+from ..utils.dbmt_utils import *
+from ..config.metadata_format import *
+from ..utils.collection_utils import *
+
 from array import array
 
 import os.path
@@ -10,7 +14,7 @@ import math
 from bpy_extras.io_utils import unpack_list, ImportHelper, axis_conversion
 from bpy.props import BoolProperty, StringProperty, CollectionProperty
 from bpy_extras.io_utils import orientation_helper
-from ..config.metadata_format import *
+
 
 
 def import_shapekeys(mesh, obj, shapekeys):

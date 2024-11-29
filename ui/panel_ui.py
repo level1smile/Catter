@@ -3,8 +3,8 @@ import os
 import json
 
 from ..utils.migoto_utils import *
-from ..utils.ui_utils import *
-
+from ..utils.vertexgroup_utils import *
+from ..utils.dbmt_utils import *
 
 
 class CatterConfigUI(bpy.types.Panel):

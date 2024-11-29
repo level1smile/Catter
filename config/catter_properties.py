@@ -1,7 +1,6 @@
 import bpy
 
-from ..utils.ui_utils import load_dbmt_path
-
+from ..utils.dbmt_utils import * 
 
 # 全局配置用起来和管理起来都很方便，跟SpectrumQT学的。
 class CatterProperties(bpy.types.PropertyGroup):

@@ -1,5 +1,6 @@
-from ..utils.ui_utils import *
-from ..utils.shapekey_utils import apply_modifiers_for_object_with_shape_keys
+from ..utils.vertexgroup_utils import *
+from ..utils.shapekey_utils import *
+from ..utils.mesh_utils import *
 
 from bpy.props import BoolProperty,  CollectionProperty
 
