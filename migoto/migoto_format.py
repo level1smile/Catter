@@ -11,6 +11,7 @@ class InputLayoutElement(object):
     Format = ""
     AlignedByteOffset = ""
     InputSlotClass = ""
+    ElementName = ""
 
     def __init__(self, arg):
         if isinstance(arg, io.IOBase):
@@ -50,11 +51,16 @@ class InputLayoutElement(object):
         while(self.read_attribute_line(f)):
             pass
         self.format_len = format_components(self.Format)
+        if self.SemanticIndex != 0:
+            self.ElementName = self.SemanticName + str(self.SemanticIndex)
+        else:
+            self.ElementName = self.SemanticName 
 
     def to_dict(self):
         d = {'SemanticName': self.SemanticName, 'SemanticIndex': self.SemanticIndex, 'Format': self.Format,
              'AlignedByteOffset': self.AlignedByteOffset,
-             'InputSlotClass': self.InputSlotClass}
+             'InputSlotClass': self.InputSlotClass,
+             'ElementName':self.ElementName}
         return d
 
     def to_string(self, indent=2):
@@ -64,12 +70,14 @@ class InputLayoutElement(object):
             Format: %s
             AlignedByteOffset: %i
             InputSlotClass: %s
+            ElementName: %s
         ''').lstrip() % (
             self.SemanticName,
             self.SemanticIndex,
             self.Format,
             self.AlignedByteOffset,
             self.InputSlotClass,
+            self.ElementName
         ), ' ' * indent)
 
     def from_dict(self, d):
@@ -78,6 +86,7 @@ class InputLayoutElement(object):
         self.Format = d['Format']
         self.AlignedByteOffset = d['AlignedByteOffset']
         self.InputSlotClass = d['InputSlotClass']
+        self.ElementName = d['ElementName']
         self.format_len = format_components(self.Format)
 
     @property

@@ -5,7 +5,7 @@ import json
 from ..utils.migoto_utils import *
 from ..utils.vertexgroup_utils import *
 from ..utils.dbmt_utils import *
-
+from ..migoto.migoto_format import InputLayout
 
 class CatterConfigUI(bpy.types.Panel):
     bl_label = "基础配置"
@@ -99,4 +99,73 @@ class MigotoIOPanel(bpy.types.Panel):
             operator_export_ibvb_merged = self.layout.operator("mmt.export_all_merged", text="一键导出选中的集合")
 
 
+
+class MigotoAttributePanel(bpy.types.Panel):
+    bl_label = "3Dmigoto属性" 
+    bl_idname = "VIEW3D_PT_CATTER_MigotoAttribute_panel"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'Catter'
+
+    def draw(self, context):
+        layout = self.layout
+        # 检查是否有选中的对象
+        if len(context.selected_objects) > 0:
+            # 获取第一个选中的对象
+            selected_obj = context.selected_objects[0]
+            
+            # 显示对象名称
+            row = layout.row()
+            row.label(text=f"当前Object名称: {selected_obj.name}")
+            row = layout.row()
+            row.label(text=f"对象Data名称: {selected_obj.data.name}")
+
+            layout.separator(type="LINE")
+
+            # 示例：显示位置信息
+            recalculate_tangent = selected_obj.get("3DMigoto:RecalculateTANGENT",None)
+            if recalculate_tangent is not None:
+                row = layout.row()
+                row.label(text=f"导出时重计算TANGENT:" + str(recalculate_tangent))
+
+            recalculate_color = selected_obj.get("3DMigoto:RecalculateCOLOR",None)
+            if recalculate_color is not None:
+                row = layout.row()
+                row.label(text=f"导出时重计算COLOR:" + str(recalculate_color))
+
+            layout.separator(type="LINE")
+
+            vblayout = selected_obj.get("3DMigoto:VBLayout",None)
+            if vblayout is not None:
+                for element_property in vblayout:
+                    row = layout.row()
+                    semantic_index_suffix = ""
+                    if element_property["SemanticIndex"] != 0:
+                        semantic_index_suffix = str(element_property["SemanticIndex"])
+                    row.label(text=element_property["SemanticName"] + semantic_index_suffix +"        " + element_property["Format"] )
+
+            vbstride = selected_obj.get("3DMigoto:VBStride",None)
+            if vbstride is not None:
+                row = layout.row()
+                row.label(text=f"3DMigoto:VBStride: " + str(vbstride))
+
+            firstvertex = selected_obj.get("3DMigoto:FirstVertex",None)
+            if firstvertex is not None:
+                row = layout.row()
+                row.label(text=f"3DMigoto:FirstVertex: " + str(firstvertex))
+
+            ibformat = selected_obj.get("3DMigoto:IBFormat",None)
+            if ibformat is not None:
+                row = layout.row()
+                row.label(text=f"3DMigoto:IBFormat: " + str(ibformat))
+
+            firstindex = selected_obj.get("3DMigoto:FirstIndex",None)
+            if firstindex is not None:
+                row = layout.row()
+                row.label(text=f"3DMigoto:FirstIndex: " + str(firstindex))
+            
+        else:
+            # 如果没有选中的对象，则显示提示信息
+            row = layout.row()
+            row.label(text="未选中mesh对象")
 
