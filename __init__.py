@@ -14,7 +14,7 @@ bl_info = {
     "name": "Catter",
     "description": "A blender plugin for game mod with 3Dmigoto.",
     "blender": (4, 2, 3),
-    "version": (1, 0, 2, 4),
+    "version": (1, 0, 2, 5),
     "location": "View3D",
     "category": "Generic",
     "tracker_url":"https://github.com/StarBobis/Catter"
