@@ -28,7 +28,7 @@ class CatterConfigUI(bpy.types.Panel):
         row = layout.row()
         row.label(text="当前游戏: " + get_current_game_from_main_json())
 
-
+        layout.separator(type="LINE")
 
 
         layout.label(text="翻转NORMAL分量")
@@ -39,6 +39,8 @@ class CatterConfigUI(bpy.types.Panel):
         row.prop(context.scene.dbmt, "flip_normal_z", text="Z")
         row.prop(context.scene.dbmt, "flip_normal_w", text="W")
 
+        layout.separator(type="LINE")
+
         layout.label(text="翻转TANGENT分量")
         row = layout.row()
        
@@ -46,7 +48,8 @@ class CatterConfigUI(bpy.types.Panel):
         row.prop(context.scene.dbmt, "flip_tangent_y", text="Y")
         row.prop(context.scene.dbmt, "flip_tangent_z", text="Z")
         row.prop(context.scene.dbmt, "flip_tangent_w", text="W")
-        layout.separator()
+
+        layout.separator(type="LINE")
         layout.prop(context.scene.dbmt, "export_same_number", text="导出不改变顶点数")
         layout.prop(context.scene.dbmt,"generate_mod_after_export",text="一键导出后自动生成二创模型")
         layout.prop(context.scene.dbmt,"import_merged_vgmap",text="使用重映射的全局顶点组")
@@ -80,7 +83,7 @@ class MigotoIOPanel(bpy.types.Panel):
         # hoyogames use new architecture so can't use old import export method.
         if current_game not in ["HI3","GI","HSR","ZZZ","Unity-CPU-PreSkinning","Game001","LiarsBar","BloodySpell"]:
             # 添加分隔符
-            layout.separator()
+            layout.separator(type="LINE")
             layout.label(text="该游戏支持仍在测试中", icon='ERROR')
             # 一键快速导入
             layout.label(text="在OutputFolder中一键导入导出")
@@ -91,7 +94,7 @@ class MigotoIOPanel(bpy.types.Panel):
             operator_export_ibvb = self.layout.operator("mmt.export_all", text="一键导出选中的集合")
         else:
             # 添加分隔符
-            layout.separator()
+            layout.separator(type="LINE")
             layout.label(text="导入导出模型集合(支持分支)")
 
             # mmt.import_all_merged
