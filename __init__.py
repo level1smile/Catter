@@ -57,8 +57,9 @@ register_classes = (
 
     # UI
     CatterConfigUI,
-    MigotoIOPanel,
     PanelModelExtract,
+    PanelModelImport,
+    MigotoIOPanel,
     MigotoAttributePanel
 )
 

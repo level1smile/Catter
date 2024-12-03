@@ -61,6 +61,28 @@ class CatterConfigUI(bpy.types.Panel):
         layout.prop(context.scene.dbmt,"import_merged_vgmap",text="使用重映射的全局顶点组")
 
 
+class PanelModelImport(bpy.types.Panel):
+    bl_label = "模型导入" 
+    bl_idname = "VIEW3D_PT_CATTER_ModelImport_panel"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'Catter'
+
+    def draw(self, context):
+        layout = self.layout
+
+        # Get output folder path.
+        output_folder_path = get_output_folder_path()
+
+        # 要从outputfolder中统计所有文件夹作为工作空间，并且显示一个下拉框供选择
+        row = layout.row()
+        row.prop(context.scene.dbmt, "workspace_namelist")
+        
+        operator_import_ib_vb = layout.operator("import_mesh.migoto_raw_buffers_mmt", text="导入 .ib & .vb 模型文件")
+        operator_import_ib_vb.filepath = dbmt_get_workspaced_output_folder_path()
+        layout.operator("mmt.import_all_merged", text="一键导入所有模型文件[分支架构]")
+
+
 class MigotoIOPanel(bpy.types.Panel):
     bl_label = "导入/导出" 
     bl_idname = "VIEW3D_PT_CATTER_IO_panel"

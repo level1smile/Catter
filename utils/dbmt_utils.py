@@ -101,7 +101,7 @@ def get_extract_drawib_list_from_game_config_json()->list:
 
 # Get every drawib folder path from output folder.
 def get_import_drawib_folder_path_list()->list:
-    output_folder_path = get_output_folder_path()
+    output_folder_path = dbmt_get_workspaced_output_folder_path()
     draw_ib_list = get_extract_drawib_list_from_game_config_json()
     import_folder_path_list = []
     for draw_ib in draw_ib_list:
@@ -188,3 +188,23 @@ def dbmt_run_generate_mod() -> str:
         subprocess.run(['explorer',os.path.join(get_output_folder_path(),"GeneratedMod\\")])
     return run_result
 
+def dbmt_get_workspace_namelist(self,context):
+    directory_path = get_output_folder_path()
+    if not os.path.isdir(directory_path):
+        return []
+    
+    # 获取所有子目录
+    directories = [d for d in os.listdir(directory_path) if os.path.isdir(os.path.join(directory_path, d))]
+    workspace_namelist = []
+    for dirname in directories:
+        workspace_namelist.append((dirname,dirname,dirname))
+
+    return workspace_namelist
+
+def dbmt_get_workspaced_output_folder_path() -> str:
+    workspacename = bpy.context.scene.dbmt.workspace_namelist
+    if workspacename != "":
+        workspaced_outputfolder = get_output_folder_path() + workspacename + "\\"
+        return workspaced_outputfolder
+    else:
+        return get_output_folder_path()

@@ -359,7 +359,7 @@ class DBMTExportMergedModVBModel(bpy.types.Operator):
     bl_description = "一键导出当前分支架构集合中所有的模型到对应的DrawIB的文件夹中并生成Export.json，隐藏显示的模型不会被导出"
 
     def execute(self, context):
-        output_folder_path = get_output_folder_path()
+        output_folder_path = dbmt_get_workspaced_output_folder_path()
         # 遍历当前选中列表的所有mesh，根据名称导出到对应的文件夹中
         # 获取当前选中的对象列表
         selected_collection = bpy.context.collection

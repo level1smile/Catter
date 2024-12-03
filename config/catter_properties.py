@@ -33,6 +33,13 @@ class CatterProperties(bpy.types.PropertyGroup):
         subtype='DIR_PATH'
     ) # type: ignore
 
+
+    workspace_namelist :bpy.props.EnumProperty (
+        items= dbmt_get_workspace_namelist,
+        name="工作空间",
+        description="选择一个工作空间"
+    ) # type: ignore
+
     # ------------------------------------------------------------------------------------------------------------
     generate_mod_after_export: bpy.props.BoolProperty(
         name="",
