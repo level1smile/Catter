@@ -2,7 +2,7 @@ import os
 import bpy
 import json
 import subprocess
-
+from .property_utils import *
 
 def save_dbmt_path(path):
     # 获取当前脚本文件的路径
@@ -208,3 +208,4 @@ def dbmt_get_workspaced_output_folder_path() -> str:
         return workspaced_outputfolder
     else:
         return get_output_folder_path()
+    

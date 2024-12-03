@@ -307,50 +307,6 @@ class Export3DMigoto(bpy.types.Operator, ExportHelper):
             self.report({'ERROR'}, str(e))
         return {'FINISHED'}
 
-
-# class MMTExportAllIBVBModel(bpy.types.Operator):
-#     bl_idname = "mmt.export_all"
-#     bl_label = "Export all .ib and .vb model to current OutputFolder"
-#     bl_description = "一键导出当前集合中所有的模型到对应的DrawIB的文件夹中，命名为从1开始自增的数字"
-
-#     def execute(self, context):
-#         output_folder_path = get_output_folder_path()
-#         # 遍历当前选中列表的所有mesh，根据名称导出到对应的文件夹中
-#         # 获取当前选中的对象列表
-#         selected_collection = bpy.context.collection
-
-#         # 遍历选中的对象
-#         export_time = 0
-#         for obj in selected_collection.objects:
-#             # 判断对象是否为网格对象
-#             if obj.type == 'MESH' and obj.hide_get() == False:
-#                 export_time = export_time + 1
-#                 bpy.context.view_layer.objects.active = obj
-#                 mesh = obj.data  # 获取网格数据
-
-#                 self.report({'INFO'}, "export name: " + mesh.name)
-
-#                 # 处理当前网格对象
-#                 # 例如，打印网格名称
-#                 original_name_without_suffix = mesh.name
-#                 if "." in mesh.name: 
-#                     original_name_without_suffix = str(mesh.name).split(".")[0]
-#                 draw_ib = original_name_without_suffix.split("-")[0]
-#                 draw_index = original_name_without_suffix.split("-")[1]
-
-#                 # 设置类属性的值
-#                 vb_path = output_folder_path + draw_ib + "\\" + draw_index + ".vb"
-#                 self.report({'INFO'}, "export path: " + vb_path)
-
-#                 ib_path = os.path.splitext(vb_path)[0] + '.ib'
-#                 fmt_path = os.path.splitext(vb_path)[0] + '.fmt'
-                
-#                 export_3dmigoto(self, context, vb_path, ib_path, fmt_path)
-#         if export_time == 0:
-#             self.report({'ERROR'}, "导出失败！未导出任何部位！")
-#         else:
-#             self.report({'INFO'}, "一键导出成功！成功导出的部位数量：" + str(export_time))
-#         return {'FINISHED'}
     
 
 class DBMTExportMergedModVBModel(bpy.types.Operator):
@@ -360,86 +316,89 @@ class DBMTExportMergedModVBModel(bpy.types.Operator):
 
     def execute(self, context):
         output_folder_path = dbmt_get_workspaced_output_folder_path()
-        # 遍历当前选中列表的所有mesh，根据名称导出到对应的文件夹中
-        # 获取当前选中的对象列表
-        selected_collection = bpy.context.collection
-
-        draw_ib = selected_collection.name
-        if "." in draw_ib:
-            draw_ib = draw_ib.split(".")[0]
-
-        # 如果当前集合没有子集合，说明不是一个合格的分支Mod
-        if len(selected_collection.children) == 0:
-            self.report({'ERROR'},"当前选中集合不是一个标准的分支模型集合，请检查您是否以分支集合方式导入了模型。")
-            return {'FINISHED'}
         
-        # 构建一个export.json，记录当前集合所有object层级关系
-        export_json = {}
-        for part_collection in selected_collection.children:
-            # 从集合名称中获取导出后部位的名称，如果有.001这种自动添加的后缀则去除掉
-            export_part_name = part_collection.name
-            if "." in export_part_name:
-                export_part_name = export_part_name[0:len(export_part_name) - 4]
+        workspace_collection = bpy.context.collection
+        for draw_ib_collection in workspace_collection.children:
+            # 获取当前选中的对象列表
 
-            part_collection_json = {}
-            for model_collection in part_collection.children:
-                # 声明一个model_collection对象
-                model_collection_json = {}
+            draw_ib = draw_ib_collection.name
+            if "." in draw_ib:
+                draw_ib = draw_ib.split(".")[0]
 
-                # 先根据颜色确定是什么类型的集合 03是开关 04是分支
-                model_collection_type = "default"
-                if model_collection.color_tag == "COLOR_03":
-                    model_collection_type = "switch"
-                elif model_collection.color_tag == "COLOR_04":
-                    model_collection_type = "toggle"
-                model_collection_json["type"] = model_collection_type
+            # 如果当前集合没有子集合，说明不是一个合格的分支Mod
+            if len(draw_ib_collection.children) == 0:
+                self.report({'ERROR'},"当前选中集合不是一个标准的分支模型集合，请检查您是否以分支集合方式导入了模型。")
+                return {'FINISHED'}
+            
+            # 构建一个export.json，记录当前集合所有object层级关系
+            export_json = {}
+            for part_collection in draw_ib_collection.children:
+                # 从集合名称中获取导出后部位的名称，如果有.001这种自动添加的后缀则去除掉
+                export_part_name = part_collection.name
+                if "." in export_part_name:
+                    export_part_name = export_part_name[0:len(export_part_name) - 4]
 
-                # 集合中的模型列表
-                model_collection_obj_name_list = []
-                for obj in model_collection.objects:
-                    # 判断对象是否为网格对象，并且不是隐藏状态
-                    if obj.type == 'MESH' and obj.hide_get() == False:
-                        model_collection_obj_name_list.append("export-" + obj.data.name)
-                model_collection_json["model"] = model_collection_obj_name_list
+                part_collection_json = {}
+                for model_collection in part_collection.children:
+                    # 声明一个model_collection对象
+                    model_collection_json = {}
 
-                # 集合的名称后面用作注释标记到ini文件中
-                part_collection_json[model_collection.name] = model_collection_json
+                    # 先根据颜色确定是什么类型的集合 03是开关 04是分支
+                    model_collection_type = "default"
+                    if model_collection.color_tag == "COLOR_03":
+                        model_collection_type = "switch"
+                    elif model_collection.color_tag == "COLOR_04":
+                        model_collection_type = "toggle"
+                    model_collection_json["type"] = model_collection_type
 
-            export_json[export_part_name] = part_collection_json
+                    # 集合中的模型列表
+                    model_collection_obj_name_list = []
+                    for obj in model_collection.objects:
+                        # 判断对象是否为网格对象，并且不是隐藏状态
+                        if obj.type == 'MESH' and obj.hide_get() == False:
+                            model_collection_obj_name_list.append("export-" + obj.data.name)
+                    model_collection_json["model"] = model_collection_obj_name_list
 
-        # 将字典转换为 JSON 格式的字符串
-        json_string = json.dumps(export_json, ensure_ascii=False, indent=4)
-        # 将 JSON 字符串写入文件
-        with open(output_folder_path + draw_ib + "\\" + 'export.json', 'w', encoding='utf-8') as f:
-            f.write(json_string)
+                    # 集合的名称后面用作注释标记到ini文件中
+                    part_collection_json[model_collection.name] = model_collection_json
 
-        # 随后直接导出所有模型
-        export_time = 0
-        for child_part_collection in selected_collection.children:
-            for model_collection in child_part_collection.children:
-                for obj in model_collection.objects:
-                    # 判断对象是否为网格对象
-                    if obj.type == 'MESH' and obj.hide_get() == False:
-                        bpy.context.view_layer.objects.active = obj
-                        vb_path = output_folder_path + draw_ib + "\\" + "export-" + obj.data.name + ".vb"
-                        ib_path = os.path.splitext(vb_path)[0] + '.ib'
-                        fmt_path = os.path.splitext(vb_path)[0] + '.fmt'
-                        
-                        export_3dmigoto(self, context, vb_path, ib_path, fmt_path)
+                export_json[export_part_name] = part_collection_json
 
-                        export_time = export_time + 1
+            # 将字典转换为 JSON 格式的字符串
+            json_string = json.dumps(export_json, ensure_ascii=False, indent=4)
+            # 将 JSON 字符串写入文件
+            export_json_path = output_folder_path + draw_ib + "\\" + 'export.json'
+            print(export_json_path)
+            with open(export_json_path, 'w', encoding='utf-8') as f:
+                f.write(json_string)
 
-        if export_time == 0:
-                self.report({'ERROR'}, "导出失败！请选择一个集合后再点一键导出！")
-        else:
-            self.report({'INFO'}, "一键导出成功！成功导出的部位数量：" + str(export_time))
+            # 随后直接导出所有模型
+            export_time = 0
+            for child_part_collection in draw_ib_collection.children:
+                for model_collection in child_part_collection.children:
+                    for obj in model_collection.objects:
+                        # 判断对象是否为网格对象
+                        if obj.type == 'MESH' and obj.hide_get() == False:
+                            bpy.context.view_layer.objects.active = obj
+                            vb_path = output_folder_path + draw_ib + "\\" + "export-" + obj.data.name + ".vb"
+                            ib_path = os.path.splitext(vb_path)[0] + '.ib'
+                            fmt_path = os.path.splitext(vb_path)[0] + '.fmt'
+                            
+                            export_3dmigoto(self, context, vb_path, ib_path, fmt_path)
 
-            # 调用生成二创模型方法。
-            if context.scene.dbmt.generate_mod_after_export:
-                result = dbmt_run_generate_mod()
-                if result == "success":
-                    self.report({'INFO'}, "生成二创模型成功!")
-                else:
-                    self.report({'ERROR'}, result)
+                            export_time = export_time + 1
+
+            if export_time == 0:
+                    self.report({'ERROR'}, "导出失败！请选择一个集合后再点一键导出！")
+            else:
+                self.report({'INFO'}, "导出成功！成功导出的部位数量：" + str(export_time))
+
+        # 调用生成二创模型方法。
+        if context.scene.dbmt.generate_mod_after_export:
+            result = dbmt_run_generate_mod()
+            if result == "success":
+                self.report({'INFO'}, "生成二创模型成功!")
+            else:
+                self.report({'ERROR'}, result)
         return {'FINISHED'}
     
