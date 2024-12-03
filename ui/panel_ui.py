@@ -94,10 +94,10 @@ class PanelModelExport(bpy.types.Panel):
 
 
         # 手动导出同理，点这个之后默认路径为OutputFolder，这样直接就能去导出不用翻很久文件夹找路径了
-        operator_export_ibvb = self.layout.operator("export_mesh.migoto_mmt", text="导出 .ib & .vb 模型文件")
+        operator_export_ibvb = layout.operator("export_mesh.migoto_mmt", text="导出 .ib & .vb 模型文件")
         operator_export_ibvb.filepath = dbmt_get_workspaced_output_folder_path() + "1.vb"
 
-        operator_export_ibvb_merged = self.layout.operator("mmt.export_all_merged", text="一键导出选中的集合[分支架构]")
+        layout.operator("mmt.export_all_merged", text="一键导出选中的集合[分支架构]")
 
 
 class PanelModelExtract(bpy.types.Panel):

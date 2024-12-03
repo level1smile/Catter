@@ -152,7 +152,7 @@ def dbmt_run_command(command_str:str):
     dbmt_path = bpy.context.scene.dbmt.path
 
     run_input_json_path = os.path.join(dbmt_path,"Configs\\RunInput.json")
-    run_input_dict = {"RunCommand":command_str}
+    run_input_dict = {"RunCommand":command_str,"WorkSpaceName":bpy.context.scene.dbmt.workspace_namelist}
     run_input_json = json.dumps(run_input_dict)
     with open(run_input_json_path, 'w') as run_input_json_file:
         run_input_json_file.write(run_input_json)
@@ -185,7 +185,7 @@ def dbmt_run_generate_mod() -> str:
     dbmt_run_command("split")
     run_result = dbmt_get_run_result()
     if run_result == "success":
-        subprocess.run(['explorer',os.path.join(get_output_folder_path(),"GeneratedMod\\")])
+        subprocess.run(['explorer',os.path.join(dbmt_get_workspaced_output_folder_path(),"GeneratedMod\\")])
     return run_result
 
 def dbmt_get_workspace_namelist(self,context):
