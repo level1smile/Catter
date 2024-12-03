@@ -1,6 +1,6 @@
 from .migoto_format import *
 from ..utils.dbmt_utils import *
-
+from ..utils.collection_utils import *
 import json
 import os.path
 import bpy
@@ -312,14 +312,18 @@ class Export3DMigoto(bpy.types.Operator, ExportHelper):
 class DBMTExportMergedModVBModel(bpy.types.Operator):
     bl_idname = "mmt.export_all_merged"
     bl_label = "Export merged model to current OutputFolder"
-    bl_description = "一键导出当前分支架构集合中所有的模型到对应的DrawIB的文件夹中并生成Export.json，隐藏显示的模型不会被导出"
+    bl_description = "一键导出当前分支架构集合中所有的模型到对应的DrawIB的文件夹中并生成Export.json，隐藏显示的模型不会被导出，隐藏的DrawIB为名称的集合不会被导出。"
 
     def execute(self, context):
         output_folder_path = dbmt_get_workspaced_output_folder_path()
         
         workspace_collection = bpy.context.collection
         for draw_ib_collection in workspace_collection.children:
-            # 获取当前选中的对象列表
+            collection_property = get_collection_properties(draw_ib_collection.name)
+
+            if collection_property is not None:
+                if collection_property["hide_viewport"]:
+                    continue
 
             draw_ib = draw_ib_collection.name
             if "." in draw_ib:
@@ -389,7 +393,7 @@ class DBMTExportMergedModVBModel(bpy.types.Operator):
                             export_time = export_time + 1
 
             if export_time == 0:
-                    self.report({'ERROR'}, "导出失败！请选择一个集合后再点一键导出！")
+                    self.report({'ERROR'}, "导出失败，未导出任何物体。")
             else:
                 self.report({'INFO'}, "导出成功！成功导出的部位数量：" + str(export_time))
 
@@ -400,5 +404,7 @@ class DBMTExportMergedModVBModel(bpy.types.Operator):
                 self.report({'INFO'}, "生成二创模型成功!")
             else:
                 self.report({'ERROR'}, result)
+
+        self.report({'INFO'}, "一键导出工作空间运行完成" )
         return {'FINISHED'}
     

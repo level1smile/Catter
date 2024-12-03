@@ -76,7 +76,7 @@ class PanelModelImport(bpy.types.Panel):
         
         operator_import_ib_vb = layout.operator("import_mesh.migoto_raw_buffers_mmt", text="导入 .ib & .vb 模型文件")
         operator_import_ib_vb.filepath = dbmt_get_workspaced_output_folder_path()
-        layout.operator("mmt.import_all_merged", text="一键导入所有模型文件[分支架构]")
+        layout.operator("mmt.import_all_merged", text="一键导入所有模型到工作空间集合[分支架构]")
 
 
 class PanelModelExport(bpy.types.Panel):
@@ -97,7 +97,7 @@ class PanelModelExport(bpy.types.Panel):
         operator_export_ibvb = layout.operator("export_mesh.migoto_mmt", text="导出 .ib & .vb 模型文件")
         operator_export_ibvb.filepath = dbmt_get_workspaced_output_folder_path() + "1.vb"
 
-        layout.operator("mmt.export_all_merged", text="一键导出选中的集合[分支架构]")
+        layout.operator("mmt.export_all_merged", text="一键导出选中的工作空间集合[分支架构]")
 
 
 class PanelModelExtract(bpy.types.Panel):
