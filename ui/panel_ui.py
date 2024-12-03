@@ -16,9 +16,15 @@ class CatterConfigUI(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        
+        row = layout.row()
+        row.label(text="DBMT-GUI.exe所在路径")
 
         # Path button to choose DBMT-GUI.exe location folder.
-        layout.prop(context.scene.dbmt,"path")
+        row = layout.row()
+        row.prop(context.scene.dbmt,"path",text="")
+
+        layout.separator(type="LINE")
 
         # 获取DBMT.exe的路径
         dbmt_gui_exe_path = os.path.join(context.scene.dbmt.path, "DBMT-GUI.exe")
@@ -100,6 +106,35 @@ class MigotoIOPanel(bpy.types.Panel):
             # mmt.import_all_merged
             operator_fast_import_merged = self.layout.operator("mmt.import_all_merged", text="一键导入所有模型文件")
             operator_export_ibvb_merged = self.layout.operator("mmt.export_all_merged", text="一键导出选中的集合")
+
+
+class PanelModelExtract(bpy.types.Panel):
+    bl_label = "FrameAnalysis模型提取" 
+    bl_idname = "VIEW3D_PT_CATTER_ModelExtract_panel"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'Catter'
+
+    def draw(self, context):
+        layout = self.layout
+
+        row = layout.row()
+        row.label(text="提取出的模型文件默认存储路径")
+        row = layout.row()
+        row.prop(context.scene.dbmt,"model_extract_output_path",text="")
+        layout.separator(type="LINE")
+
+        row = layout.row()
+        row.label(text="工作空间名称")
+        row = layout.row()
+        row.prop(context.scene.dbmt,"model_workspace_name")
+        layout.separator(type="LINE")
+
+        row = layout.row()
+        row.label(text="DrawIB列表")
+        row = layout.row()
+        row.prop(context.scene.dbmt,"draw_ib_input_text")
+        layout.separator(type="LINE")
 
 
 

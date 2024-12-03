@@ -6,12 +6,34 @@ from ..utils.dbmt_utils import *
 # 全局配置用起来和管理起来都很方便，跟SpectrumQT学的。
 class CatterProperties(bpy.types.PropertyGroup):
     path: bpy.props.StringProperty(
-        name="主路径",
+        name="DBMT-GUI.exe所在路径",
         description="插件需要先选择DBMT-GUI.exe的所在路径才能正常工作",
         default=load_dbmt_path(),
         subtype='DIR_PATH'
     ) # type: ignore
 
+    model_extract_output_path: bpy.props.StringProperty(
+        name="",
+        description="FrameAnalysis提取出的模型文件默认存放路径",
+        default="",
+        subtype='DIR_PATH'
+    ) # type: ignore
+
+
+    draw_ib_input_text: bpy.props.StringProperty(
+        name="",
+        description="DrawIB指绘制时使用的IndexBuffer的Hash指，输入多个DrawIB用逗号隔开",
+        default=""
+    ) # type: ignore
+
+    model_workspace_name: bpy.props.StringProperty(
+        name="",
+        description="工作空间名称,手动输入名称则会提取到上面设置的默认路径下并以此名称创建新文件夹存储，手动点击按钮选择路径则会存储到选择的路径中",
+        default="",
+        subtype='DIR_PATH'
+    ) # type: ignore
+
+    # ------------------------------------------------------------------------------------------------------------
     generate_mod_after_export: bpy.props.BoolProperty(
         name="",
         description="在一键导出当前选中集合后，调用DBMT的生成二创模型方法，可以节省打开DBMT-GUI再点一下生成二创模型的时间",
