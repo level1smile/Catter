@@ -72,13 +72,6 @@ def get_output_folder_path() -> str:
     return output_folder_path
 
 
-
-def get_mmt_path()->str:
-    return bpy.context.scene.dbmt.path
-
-
-
-
 # Get Games\\xxx\\Config.json path.
 def get_game_config_json_path()->str:
     current_game =  get_current_game_from_main_json()
