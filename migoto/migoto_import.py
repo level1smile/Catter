@@ -477,54 +477,54 @@ class Import3DMigotoRaw(bpy.types.Operator, ImportHelper):
         return {'FINISHED'}
     
 
-class MMTImportAllVbModel(bpy.types.Operator):
-    bl_idname = "mmt.import_all"
-    bl_label = "Import all .ib .vb model from current OutputFolder"
-    bl_description = "一键导入当前output文件夹下所有的DrawIB对应的模型到各自的集合中"
+# class MMTImportAllVbModel(bpy.types.Operator):
+#     bl_idname = "mmt.import_all"
+#     bl_label = "Import all .ib .vb model from current OutputFolder"
+#     bl_description = "一键导入当前output文件夹下所有的DrawIB对应的模型到各自的集合中"
 
-    def execute(self, context):
-        import_drawib_folder_path_list = get_import_drawib_folder_path_list()
+#     def execute(self, context):
+#         import_drawib_folder_path_list = get_import_drawib_folder_path_list()
 
-        for import_folder_path in import_drawib_folder_path_list:
-            folder_draw_ib_name = os.path.basename(import_folder_path)
-            collection = bpy.data.collections.new(folder_draw_ib_name)
-            bpy.context.scene.collection.children.link(collection)
+#         for import_folder_path in import_drawib_folder_path_list:
+#             folder_draw_ib_name = os.path.basename(import_folder_path)
+#             collection = bpy.data.collections.new(folder_draw_ib_name)
+#             bpy.context.scene.collection.children.link(collection)
 
-            # 读取文件夹下面所有的vb和ib文件的prefix
-            import_prefix_list = get_prefix_list_from_tmp_json(import_folder_path)
-            print(import_prefix_list)
+#             # 读取文件夹下面所有的vb和ib文件的prefix
+#             import_prefix_list = get_prefix_list_from_tmp_json(import_folder_path)
+#             print(import_prefix_list)
 
-            # 遍历并导入每一个ib vb文件
-            for prefix in import_prefix_list:
-                vb_bin_path = import_folder_path + "\\" + prefix + '.vb'
-                ib_bin_path = import_folder_path + "\\" + prefix + '.ib'
-                fmt_path = import_folder_path + "\\" + prefix + '.fmt'
-                if not os.path.exists(vb_bin_path):
-                    raise Fatal('Unable to find matching .vb file for %s' % import_folder_path + "\\" + prefix)
-                if not os.path.exists(ib_bin_path):
-                    raise Fatal('Unable to find matching .ib file for %s' % import_folder_path + "\\" + prefix)
-                if not os.path.exists(fmt_path):
-                    fmt_path = None
+#             # 遍历并导入每一个ib vb文件
+#             for prefix in import_prefix_list:
+#                 vb_bin_path = import_folder_path + "\\" + prefix + '.vb'
+#                 ib_bin_path = import_folder_path + "\\" + prefix + '.ib'
+#                 fmt_path = import_folder_path + "\\" + prefix + '.fmt'
+#                 if not os.path.exists(vb_bin_path):
+#                     raise Fatal('Unable to find matching .vb file for %s' % import_folder_path + "\\" + prefix)
+#                 if not os.path.exists(ib_bin_path):
+#                     raise Fatal('Unable to find matching .ib file for %s' % import_folder_path + "\\" + prefix)
+#                 if not os.path.exists(fmt_path):
+#                     fmt_path = None
 
-                # 一些需要传递过去的参数，反正这里传空的是可以用的
-                migoto_raw_import_options = {}
+#                 # 一些需要传递过去的参数，反正这里传空的是可以用的
+#                 migoto_raw_import_options = {}
 
-                # 这里使用一个done的set来记录已经处理过的文件路径，如果处理过就会在里面触发continue
-                done = set()
-                try:
-                    if os.path.normcase(vb_bin_path) in done:
-                        continue
-                    done.add(os.path.normcase(vb_bin_path))
-                    if fmt_path is not None:
-                        obj_result = import_3dmigoto_raw_buffers(self, context, fmt_path=fmt_path, vb_path=vb_bin_path,
-                                                                  ib_path=ib_bin_path, **migoto_raw_import_options)
-                        collection.objects.link(obj_result)
-                    else:
-                        self.report({'ERROR'}, "Can't find .fmt file!")
-                except Fatal as e:
-                    self.report({'ERROR'}, str(e))
+#                 # 这里使用一个done的set来记录已经处理过的文件路径，如果处理过就会在里面触发continue
+#                 done = set()
+#                 try:
+#                     if os.path.normcase(vb_bin_path) in done:
+#                         continue
+#                     done.add(os.path.normcase(vb_bin_path))
+#                     if fmt_path is not None:
+#                         obj_result = import_3dmigoto_raw_buffers(self, context, fmt_path=fmt_path, vb_path=vb_bin_path,
+#                                                                   ib_path=ib_bin_path, **migoto_raw_import_options)
+#                         collection.objects.link(obj_result)
+#                     else:
+#                         self.report({'ERROR'}, "Can't find .fmt file!")
+#                 except Fatal as e:
+#                     self.report({'ERROR'}, str(e))
 
-        return {'FINISHED'}
+#         return {'FINISHED'}
 
 
 class DBMTImportAllVbModelMerged(bpy.types.Operator):

@@ -308,49 +308,49 @@ class Export3DMigoto(bpy.types.Operator, ExportHelper):
         return {'FINISHED'}
 
 
-class MMTExportAllIBVBModel(bpy.types.Operator):
-    bl_idname = "mmt.export_all"
-    bl_label = "Export all .ib and .vb model to current OutputFolder"
-    bl_description = "一键导出当前集合中所有的模型到对应的DrawIB的文件夹中，命名为从1开始自增的数字"
+# class MMTExportAllIBVBModel(bpy.types.Operator):
+#     bl_idname = "mmt.export_all"
+#     bl_label = "Export all .ib and .vb model to current OutputFolder"
+#     bl_description = "一键导出当前集合中所有的模型到对应的DrawIB的文件夹中，命名为从1开始自增的数字"
 
-    def execute(self, context):
-        output_folder_path = get_output_folder_path()
-        # 遍历当前选中列表的所有mesh，根据名称导出到对应的文件夹中
-        # 获取当前选中的对象列表
-        selected_collection = bpy.context.collection
+#     def execute(self, context):
+#         output_folder_path = get_output_folder_path()
+#         # 遍历当前选中列表的所有mesh，根据名称导出到对应的文件夹中
+#         # 获取当前选中的对象列表
+#         selected_collection = bpy.context.collection
 
-        # 遍历选中的对象
-        export_time = 0
-        for obj in selected_collection.objects:
-            # 判断对象是否为网格对象
-            if obj.type == 'MESH' and obj.hide_get() == False:
-                export_time = export_time + 1
-                bpy.context.view_layer.objects.active = obj
-                mesh = obj.data  # 获取网格数据
+#         # 遍历选中的对象
+#         export_time = 0
+#         for obj in selected_collection.objects:
+#             # 判断对象是否为网格对象
+#             if obj.type == 'MESH' and obj.hide_get() == False:
+#                 export_time = export_time + 1
+#                 bpy.context.view_layer.objects.active = obj
+#                 mesh = obj.data  # 获取网格数据
 
-                self.report({'INFO'}, "export name: " + mesh.name)
+#                 self.report({'INFO'}, "export name: " + mesh.name)
 
-                # 处理当前网格对象
-                # 例如，打印网格名称
-                original_name_without_suffix = mesh.name
-                if "." in mesh.name: 
-                    original_name_without_suffix = str(mesh.name).split(".")[0]
-                draw_ib = original_name_without_suffix.split("-")[0]
-                draw_index = original_name_without_suffix.split("-")[1]
+#                 # 处理当前网格对象
+#                 # 例如，打印网格名称
+#                 original_name_without_suffix = mesh.name
+#                 if "." in mesh.name: 
+#                     original_name_without_suffix = str(mesh.name).split(".")[0]
+#                 draw_ib = original_name_without_suffix.split("-")[0]
+#                 draw_index = original_name_without_suffix.split("-")[1]
 
-                # 设置类属性的值
-                vb_path = output_folder_path + draw_ib + "\\" + draw_index + ".vb"
-                self.report({'INFO'}, "export path: " + vb_path)
+#                 # 设置类属性的值
+#                 vb_path = output_folder_path + draw_ib + "\\" + draw_index + ".vb"
+#                 self.report({'INFO'}, "export path: " + vb_path)
 
-                ib_path = os.path.splitext(vb_path)[0] + '.ib'
-                fmt_path = os.path.splitext(vb_path)[0] + '.fmt'
+#                 ib_path = os.path.splitext(vb_path)[0] + '.ib'
+#                 fmt_path = os.path.splitext(vb_path)[0] + '.fmt'
                 
-                export_3dmigoto(self, context, vb_path, ib_path, fmt_path)
-        if export_time == 0:
-            self.report({'ERROR'}, "导出失败！未导出任何部位！")
-        else:
-            self.report({'INFO'}, "一键导出成功！成功导出的部位数量：" + str(export_time))
-        return {'FINISHED'}
+#                 export_3dmigoto(self, context, vb_path, ib_path, fmt_path)
+#         if export_time == 0:
+#             self.report({'ERROR'}, "导出失败！未导出任何部位！")
+#         else:
+#             self.report({'INFO'}, "一键导出成功！成功导出的部位数量：" + str(export_time))
+#         return {'FINISHED'}
     
 
 class DBMTExportMergedModVBModel(bpy.types.Operator):

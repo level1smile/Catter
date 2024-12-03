@@ -29,8 +29,8 @@ register_classes = (
     Import3DMigotoRaw,
     Export3DMigoto,
     # MMT的一键快速导入导出
-    MMTImportAllVbModel,
-    MMTExportAllIBVBModel,
+    # MMTImportAllVbModel,
+    # MMTExportAllIBVBModel,
     # 多合一的一键快速导入导出
     DBMTImportAllVbModelMerged,
     DBMTExportMergedModVBModel,
@@ -59,7 +59,7 @@ register_classes = (
     CatterConfigUI,
     PanelModelExtract,
     PanelModelImport,
-    MigotoIOPanel,
+    PanelModelExport,
     MigotoAttributePanel
 )
 
