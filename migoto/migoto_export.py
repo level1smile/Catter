@@ -83,7 +83,16 @@ def blender_vertex_to_3dmigoto_vertex(mesh, obj, blender_loop_vertex, layout:Inp
                 if uv_name in texcoords:
                     uvs += list(texcoords[uv_name][blender_loop_vertex.index])
             vertex[elem.name] = uvs
-
+        elif elem.name.startswith('SHAPEKEY'):
+            # 如果在这里处理ShapeKey，效率太低了，有几个ShapeKey就得遍历几遍去拿对应的数据，而且还要拼接好
+            # 直接输出Buffer文件更好一点。
+            # TODO 整个基于.ib .vb的架构都应该舍弃，更换为基于Buffer + Json文件描述的架构。 
+            # 但是暂时舍弃不掉，只能先凑合用着了。
+            # - 在导入Blender之前进行预处理，提高导入到Blender中的速度。
+            # - 在从Blender导出时，不进行任何处理直接导出，从而提高导出速度。
+            # TODO 编写专门的测试导出为Buffer的按钮进行导出测试。   
+            pass
+        
         # Nico: 不需要考虑BINORMAL，现代游戏的渲染基本上不会使用BINORMAL这种过时的渲染方案
         # elif elem.name.startswith('BINORMAL'):
             # Some DOA6 meshes (skirts) use BINORMAL, but I'm not certain it is
@@ -101,17 +110,9 @@ def blender_vertex_to_3dmigoto_vertex(mesh, obj, blender_loop_vertex, layout:Inp
             # pass
 
         else:
-            # Unhandled semantics are saved in vertex layers
-            data = []
-            for component in 'xyzw':
-                layer_name = '%s.%s' % (elem.name, component)
-                if layer_name in mesh.vertex_layers_int:
-                    data.append(mesh.vertex_layers_int[layer_name].data[blender_loop_vertex.vertex_index].value)
-                elif layer_name in mesh.vertex_layers_float:
-                    data.append(mesh.vertex_layers_float[layer_name].data[blender_loop_vertex.vertex_index].value)
-            if data:
-                # print('Retrieved unhandled semantic %s %s from vertex layer' % (elem.name, elem.Format), data)
-                vertex[elem.name] = data
+            # TODO
+            # 如果属性不在已知范围内，不做任何处理。
+            pass
 
         if elem.name not in vertex:
             print('NOTICE: Unhandled vertex element: %s' % elem.name)
