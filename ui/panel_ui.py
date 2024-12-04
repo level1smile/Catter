@@ -116,8 +116,7 @@ class PanelModelExtract(bpy.types.Panel):
         row.prop(context.scene.dbmt,"model_extract_output_path",text="")
         layout.separator(type="LINE")
 
-        row = layout.row()
-        row.label(text="工作空间名称")
+        layout.row().label(text="工作空间名称")
         row = layout.row()
         row.prop(context.scene.dbmt,"model_workspace_name")
         layout.separator(type="LINE")
@@ -145,11 +144,8 @@ class MigotoAttributePanel(bpy.types.Panel):
             selected_obj = context.selected_objects[0]
             
             # 显示对象名称
-            row = layout.row()
-            row.label(text=f"当前Object名称: {selected_obj.name}")
-            row = layout.row()
-            row.label(text=f"对象Data名称: {selected_obj.data.name}")
-
+            layout.row().label(text=f"当前Object名称: {selected_obj.name}")
+            layout.row().label(text=f"对象Data名称: {selected_obj.data.name}")
             layout.separator(type="LINE")
 
             # 示例：显示位置信息
