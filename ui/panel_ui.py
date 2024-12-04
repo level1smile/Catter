@@ -5,7 +5,7 @@ import json
 from ..utils.migoto_utils import *
 from ..utils.vertexgroup_utils import *
 from ..utils.dbmt_utils import *
-from ..migoto.migoto_format import InputLayout
+from ..migoto.input_layout import InputLayout
 
 class CatterConfigUI(bpy.types.Panel):
     bl_label = "基础配置"
