@@ -84,6 +84,9 @@ def blender_vertex_to_3dmigoto_vertex(mesh, obj, blender_loop_vertex, layout:Inp
                     uvs += list(texcoords[uv_name][blender_loop_vertex.index])
             vertex[elem.name] = uvs
         elif elem.name.startswith('SHAPEKEY'):
+            
+
+
             # 如果在这里处理ShapeKey，效率太低了，有几个ShapeKey就得遍历几遍去拿对应的数据，而且还要拼接好
             # 直接输出Buffer文件更好一点。
             # TODO 整个基于.ib .vb的架构都应该舍弃，更换为基于Buffer + Json文件描述的架构。 
@@ -375,7 +378,11 @@ class DBMTExportMergedModVBModel(bpy.types.Operator):
             # 将字典转换为 JSON 格式的字符串
             json_string = json.dumps(export_json, ensure_ascii=False, indent=4)
             # 将 JSON 字符串写入文件
-            export_json_path = output_folder_path + draw_ib + "\\" + 'export.json'
+
+            exported_folder_path = os.path.join(output_folder_path, draw_ib + "/ExportedModel/")
+            os.makedirs(exported_folder_path)
+
+            export_json_path = exported_folder_path + 'export.json'
             print(export_json_path)
             with open(export_json_path, 'w', encoding='utf-8') as f:
                 f.write(json_string)
@@ -388,7 +395,7 @@ class DBMTExportMergedModVBModel(bpy.types.Operator):
                         # 判断对象是否为网格对象
                         if obj.type == 'MESH' and obj.hide_get() == False:
                             bpy.context.view_layer.objects.active = obj
-                            vb_path = output_folder_path + draw_ib + "\\" + "export-" + obj.data.name + ".vb"
+                            vb_path = exported_folder_path + "export-" + obj.data.name + ".vb"
                             ib_path = os.path.splitext(vb_path)[0] + '.ib'
                             fmt_path = os.path.splitext(vb_path)[0] + '.fmt'
                             

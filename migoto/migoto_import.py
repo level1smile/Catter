@@ -456,11 +456,25 @@ class Import3DMigotoRaw(bpy.types.Operator, ImportHelper):
         collection = bpy.data.collections.new(collection_name)
         bpy.context.scene.collection.children.link(collection)
 
+        # 这里如果用户不选择任何fmt文件，则默认返回读取所有的fmt文件。
+        import_filename_list = []
+        if len(self.files) == 1:
+            if str(self.filepath).endswith(".fmt"):
+                import_filename_list.append(self.filepath)
+            else:
+                for filename in os.listdir(self.filepath):
+                    if filename.endswith(".fmt"):
+                        import_filename_list.append(filename)
+        else:
+            for fmtfile in self.files:
+                import_filename_list.append(fmtfile.name)
+
+
         done = set()
-        for fmt_file in self.files:
+        for fmt_file_name in import_filename_list:
             
             try:
-                fmt_file_path = os.path.join(dirname, fmt_file.name)
+                fmt_file_path = os.path.join(dirname, fmt_file_name)
                 (vb_path, ib_path, fmt_path) = self.get_vb_ib_paths_from_fmt_prefix(fmt_file_path)
                 if os.path.normcase(vb_path) in done:
                     continue
@@ -485,24 +499,31 @@ class DBMTImportAllVbModelMerged(bpy.types.Operator):
     bl_description = "一键导入当前output文件夹下所有的DrawIB对应的模型为分支集合架构"
 
     def execute(self, context):
-        import_drawib_folder_path_list = get_import_drawib_folder_path_list()
+        import_drawib_folder_path_dict = {}
+
+        current_game = get_current_game_from_main_json()
+        if current_game != "HSR":
+            import_drawib_folder_path_dict = get_import_drawib_folder_path_dict()
+        else:
+            import_drawib_folder_path_dict = get_import_drawib_folder_path_dict_with_first_match_type()
         # self.report({'INFO'}, "读取到的drawIB文件夹总数量：" + str(len(import_folder_path_list)))
 
         workspace_collection = bpy.data.collections.new(get_current_workspace_name())
         workspace_collection.color_tag = "COLOR_01"
 
-        for import_folder_path in import_drawib_folder_path_list:
+        print(import_drawib_folder_path_dict)
+
+        for draw_ib,import_folder_path in import_drawib_folder_path_dict.items():
             import_prefix_list = get_prefix_list_from_tmp_json(import_folder_path)
 
             # get drawib from folder name.
-            folder_draw_ib_name = os.path.basename(import_folder_path)
 
             if len(import_prefix_list) == 0:
-                self.report({'ERROR'},"当前output文件夹"+folder_draw_ib_name+"中的内容暂不支持一键导入分支模型")
+                self.report({'ERROR'},"当前output文件夹"+draw_ib+"中的内容暂不支持一键导入分支模型")
                 continue
 
             # create a new collection.
-            draw_ib_collection = bpy.data.collections.new(folder_draw_ib_name)
+            draw_ib_collection = bpy.data.collections.new(draw_ib)
             draw_ib_collection.color_tag = "COLOR_07" #粉色
 
             workspace_collection.children.link(draw_ib_collection)

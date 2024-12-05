@@ -93,17 +93,50 @@ def get_extract_drawib_list_from_game_config_json()->list:
 
 
 # Get every drawib folder path from output folder.
-def get_import_drawib_folder_path_list()->list:
+def get_import_drawib_folder_path_dict()->list:
     output_folder_path = dbmt_get_workspaced_output_folder_path()
     draw_ib_list = get_extract_drawib_list_from_game_config_json()
-    import_folder_path_list = []
+    import_folder_path_dict = {}
     for draw_ib in draw_ib_list:
         # print("DrawIB:", draw_ib)
-        import_folder_path_list.append(os.path.join(output_folder_path, draw_ib))
-    return import_folder_path_list
+        import_folder_path_dict[draw_ib] = os.path.join(output_folder_path, draw_ib)
+    return import_folder_path_dict
+
+def get_import_drawib_folder_path_dict_with_first_match_type()->list:
+    output_folder_path = dbmt_get_workspaced_output_folder_path()
+    draw_ib_list = get_extract_drawib_list_from_game_config_json()
+    
+    final_import_folder_path_dict = {}
+
+    for draw_ib in draw_ib_list:
+        gpu_import_folder_path_list = []
+        cpu_import_folder_path_list = []
+
+        # print("DrawIB:", draw_ib)
+        import_drawib_folder_path = os.path.join(output_folder_path, draw_ib)
+        dirs = os.listdir(import_drawib_folder_path)
+        for dirname in dirs:
+            if not dirname.startswith("TYPE_"):
+                continue
+            final_import_folder_path = os.path.join(import_drawib_folder_path,dirname)
+            if dirname.startswith("TYPE_GPU"):
+                gpu_import_folder_path_list.append(final_import_folder_path)
+            elif dirname.startswith("TYPE_CPU"):
+                cpu_import_folder_path_list.append(final_import_folder_path)
+
+        if len(gpu_import_folder_path_list) != 0:
+            final_import_folder_path_dict[draw_ib] = gpu_import_folder_path_list[0]
+        elif len(cpu_import_folder_path_list) != 0:
+            final_import_folder_path_dict[draw_ib] = cpu_import_folder_path_list[0]
+        else:
+            pass
+            # raise ImportError()
+
+    return final_import_folder_path_dict
 
 
 # Read import model name list from tmp.json.
+# TODO Deprecated 
 def get_prefix_list_from_tmp_json(import_folder_path:str) ->list:
     
     tmp_json_path = os.path.join(import_folder_path, "tmp.json")
