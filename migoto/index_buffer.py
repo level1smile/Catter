@@ -9,6 +9,7 @@ class IndexBuffer(object):
         self.first = 0
         self.index_count = 0
         self.format = 'DXGI_FORMAT_UNKNOWN'
+        self.gametypename = ""
         self.offset = 0
         self.topology = 'trianglelist'
 
@@ -38,6 +39,8 @@ class IndexBuffer(object):
                     raise Fatal('"%s" is not yet supported' % line)
             elif line.startswith('format:'):
                 self.format = line[8:]
+            elif line.startswith('gametypename:'):
+                self.gametypename = line[14:]
             elif line == '':
                     return
         assert (len(self.faces) * 3 == self.index_count)

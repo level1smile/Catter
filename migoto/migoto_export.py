@@ -130,6 +130,7 @@ def write_fmt_file(f, vb, ib):
     f.write('topology: %s\n' % vb.topology)
     if ib is not None:
         f.write('format: %s\n' % ib.format)
+        f.write('gametypename: %s\n' % ib.gametypename)
     f.write(vb.layout.to_string())
 
 
