@@ -323,6 +323,7 @@ def import_3dmigoto_raw_buffers(operator, context, fmt_path:str, vb_path:str, ib
     obj['3DMigoto:VBStride'] = vb.layout.stride
     obj['3DMigoto:FirstVertex'] = vb.first
     obj['3DMigoto:IBFormat'] = ib.format
+    obj['3DMigoto:GameTypeName'] = ib.gametypename
     obj['3DMigoto:FirstIndex'] = ib.first
 
     # Nico: 设置默认不重计算TANGNET和COLOR
@@ -501,11 +502,7 @@ class DBMTImportAllVbModelMerged(bpy.types.Operator):
     def execute(self, context):
         import_drawib_folder_path_dict = {}
 
-        current_game = get_current_game_from_main_json()
-        if current_game != "HSR":
-            import_drawib_folder_path_dict = get_import_drawib_folder_path_dict()
-        else:
-            import_drawib_folder_path_dict = get_import_drawib_folder_path_dict_with_first_match_type()
+        import_drawib_folder_path_dict = get_import_drawib_folder_path_dict_with_first_match_type()
         # self.report({'INFO'}, "读取到的drawIB文件夹总数量：" + str(len(import_folder_path_list)))
 
         workspace_collection = bpy.data.collections.new(get_current_workspace_name())

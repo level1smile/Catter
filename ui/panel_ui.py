@@ -161,6 +161,12 @@ class MigotoAttributePanel(bpy.types.Panel):
 
             layout.separator(type="LINE")
 
+
+            gametypename = selected_obj.get("3DMigoto:GameTypeName",None)
+            if gametypename is not None:
+                row = layout.row()
+                row.label(text=f"GameType: " + str(gametypename))
+
             vblayout = selected_obj.get("3DMigoto:VBLayout",None)
             if vblayout is not None:
                 for element_property in vblayout:

@@ -130,7 +130,7 @@ def write_fmt_file(f, vb, ib):
     f.write('topology: %s\n' % vb.topology)
     if ib is not None:
         f.write('format: %s\n' % ib.format)
-        f.write('gametypename: %s\n' % ib.gametypename)
+        f.write('gametypename: ' +  ib.gametypename + '\n')
     f.write(vb.layout.to_string())
 
 
@@ -186,6 +186,8 @@ def export_3dmigoto(operator, context, vb_path, ib_path, fmt_path):
         raise Fatal('FIXME: Add capability to export without an index buffer')
     else:
         ib = IndexBuffer(ib_format)
+    
+    ib.gametypename = obj['3DMigoto:GameTypeName']
 
     # Calculates tangents and makes loop normals valid (still with our
     # custom normal data from import time):
@@ -381,7 +383,10 @@ class DBMTExportMergedModVBModel(bpy.types.Operator):
             # 将 JSON 字符串写入文件
 
             exported_folder_path = os.path.join(output_folder_path, draw_ib + "/ExportedModel/")
-            os.makedirs(exported_folder_path)
+
+            if not os.path.exists:
+                os.makedirs(exported_folder_path)
+
 
             export_json_path = exported_folder_path + 'export.json'
             print(export_json_path)
