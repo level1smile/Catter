@@ -268,7 +268,8 @@ def create_material_with_texture(obj, mesh_name:str, directory:str):
         material.use_nodes = True
 
         # Nico: Currently only support EN and ZH-CN
-        bsdf = material.node_tree.nodes.get("原理化BSDF")
+        # 4.2 简体中文是 "原理化 BSDF" 英文是 "Principled BSDF"
+        bsdf = material.node_tree.nodes.get("原理化 BSDF")
         if not bsdf:
             bsdf = material.node_tree.nodes.get("Principled BSDF")
 
