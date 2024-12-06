@@ -114,6 +114,10 @@ def get_import_drawib_folder_path_dict_with_first_match_type()->list:
 
         # print("DrawIB:", draw_ib)
         import_drawib_folder_path = os.path.join(output_folder_path, draw_ib)
+
+        if not os.path.exists(import_drawib_folder_path):
+            continue
+
         dirs = os.listdir(import_drawib_folder_path)
         for dirname in dirs:
             if not dirname.startswith("TYPE_"):

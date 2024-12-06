@@ -7,3 +7,11 @@ def get_current_workspace_name()->str:
 
 def get_mmt_path()->str:
     return bpy.context.scene.dbmt.path
+
+def draw_seperator(self):
+    layout = self.layout
+
+    if bpy.app.version < (4,2,0):
+        layout.separator()
+    else:
+        layout.separator(type="LINE")

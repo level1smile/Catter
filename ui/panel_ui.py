@@ -24,7 +24,7 @@ class CatterConfigUI(bpy.types.Panel):
         row = layout.row()
         row.prop(context.scene.dbmt,"path",text="")
 
-        layout.separator(type="LINE")
+        draw_seperator(self)
 
         # 获取DBMT.exe的路径
         dbmt_gui_exe_path = os.path.join(context.scene.dbmt.path, "DBMT-GUI.exe")
@@ -34,7 +34,7 @@ class CatterConfigUI(bpy.types.Panel):
         row = layout.row()
         row.label(text="当前游戏: " + get_current_game_from_main_json())
 
-        layout.separator(type="LINE")
+        draw_seperator(self)
 
 
         layout.label(text="翻转NORMAL分量")
@@ -45,7 +45,7 @@ class CatterConfigUI(bpy.types.Panel):
         row.prop(context.scene.dbmt, "flip_normal_z", text="Z")
         row.prop(context.scene.dbmt, "flip_normal_w", text="W")
 
-        layout.separator(type="LINE")
+        draw_seperator(self)
 
         layout.label(text="翻转TANGENT分量")
         row = layout.row()
@@ -55,7 +55,7 @@ class CatterConfigUI(bpy.types.Panel):
         row.prop(context.scene.dbmt, "flip_tangent_z", text="Z")
         row.prop(context.scene.dbmt, "flip_tangent_w", text="W")
 
-        layout.separator(type="LINE")
+        draw_seperator(self)
         layout.prop(context.scene.dbmt, "export_same_number", text="导出不改变顶点数")
         layout.prop(context.scene.dbmt,"generate_mod_after_export",text="一键导出后自动生成二创模型")
         layout.prop(context.scene.dbmt,"import_merged_vgmap",text="使用重映射的全局顶点组")
@@ -114,18 +114,18 @@ class PanelModelExtract(bpy.types.Panel):
         row.label(text="提取出的模型文件默认存储路径")
         row = layout.row()
         row.prop(context.scene.dbmt,"model_extract_output_path",text="")
-        layout.separator(type="LINE")
+        draw_seperator(self)
 
         layout.row().label(text="工作空间名称")
         row = layout.row()
         row.prop(context.scene.dbmt,"model_workspace_name")
-        layout.separator(type="LINE")
+        draw_seperator(self)
 
         row = layout.row()
         row.label(text="DrawIB列表")
         row = layout.row()
         row.prop(context.scene.dbmt,"draw_ib_input_text")
-        layout.separator(type="LINE")
+        draw_seperator(self)
 
 
 
@@ -146,7 +146,7 @@ class MigotoAttributePanel(bpy.types.Panel):
             # 显示对象名称
             layout.row().label(text=f"当前Object名称: {selected_obj.name}")
             layout.row().label(text=f"对象Data名称: {selected_obj.data.name}")
-            layout.separator(type="LINE")
+            draw_seperator(self)
 
             # 示例：显示位置信息
             recalculate_tangent = selected_obj.get("3DMigoto:RecalculateTANGENT",None)
@@ -159,7 +159,7 @@ class MigotoAttributePanel(bpy.types.Panel):
                 row = layout.row()
                 row.label(text=f"导出时重计算COLOR:" + str(recalculate_color))
 
-            layout.separator(type="LINE")
+            draw_seperator(self)
 
 
             gametypename = selected_obj.get("3DMigoto:GameTypeName",None)
