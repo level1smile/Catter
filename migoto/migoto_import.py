@@ -147,6 +147,7 @@ def import_vertices(mesh, vb: VertexBuffer):
     shapekeys = {}
     vertex_layers = {}
     use_normals = False
+    normals = []
 
     for elem in vb.layout:
         if elem.InputSlotClass != 'per-vertex':

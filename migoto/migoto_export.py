@@ -384,7 +384,7 @@ class DBMTExportMergedModVBModel(bpy.types.Operator):
 
             exported_folder_path = os.path.join(output_folder_path, draw_ib + "/ExportedModel/")
 
-            if not os.path.exists:
+            if not os.path.exists(exported_folder_path):
                 os.makedirs(exported_folder_path)
 
 
