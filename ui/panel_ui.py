@@ -100,32 +100,32 @@ class PanelModelExport(bpy.types.Panel):
         layout.operator("mmt.export_all_merged", text="一键导出选中的工作空间集合[分支架构]")
 
 
-class PanelModelExtract(bpy.types.Panel):
-    bl_label = "FrameAnalysis模型提取" 
-    bl_idname = "VIEW3D_PT_CATTER_ModelExtract_panel"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = 'Catter'
+# class PanelModelExtract(bpy.types.Panel):
+#     bl_label = "FrameAnalysis模型提取" 
+#     bl_idname = "VIEW3D_PT_CATTER_ModelExtract_panel"
+#     bl_space_type = 'VIEW_3D'
+#     bl_region_type = 'UI'
+#     bl_category = 'Catter'
 
-    def draw(self, context):
-        layout = self.layout
+#     def draw(self, context):
+#         layout = self.layout
 
-        row = layout.row()
-        row.label(text="提取出的模型文件默认存储路径")
-        row = layout.row()
-        row.prop(context.scene.dbmt,"model_extract_output_path",text="")
-        draw_seperator(self)
+#         row = layout.row()
+#         row.label(text="提取出的模型文件默认存储路径")
+#         row = layout.row()
+#         row.prop(context.scene.dbmt,"model_extract_output_path",text="")
+#         draw_seperator(self)
 
-        layout.row().label(text="工作空间名称")
-        row = layout.row()
-        row.prop(context.scene.dbmt,"model_workspace_name")
-        draw_seperator(self)
+#         layout.row().label(text="工作空间名称")
+#         row = layout.row()
+#         row.prop(context.scene.dbmt,"model_workspace_name")
+#         draw_seperator(self)
 
-        row = layout.row()
-        row.label(text="DrawIB列表")
-        row = layout.row()
-        row.prop(context.scene.dbmt,"draw_ib_input_text")
-        draw_seperator(self)
+#         row = layout.row()
+#         row.label(text="DrawIB列表")
+#         row = layout.row()
+#         row.prop(context.scene.dbmt,"draw_ib_input_text")
+#         draw_seperator(self)
 
 
 
