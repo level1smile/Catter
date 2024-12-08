@@ -377,10 +377,14 @@ def import_3dmigoto_raw_buffers(operator, context, fmt_path:str, vb_path:str, ib
     create_material_with_texture(obj, mesh_name=mesh_name,directory= os.path.dirname(fmt_path))
 
     # ZZZ need reset rotation.
-    if current_game not in ["GI","HI3","HSR"]:
+    if current_game not in ["GI","HI3","HSR","Game001"]:
         obj.rotation_euler[0] = 0.0  # X轴
         obj.rotation_euler[1] = 0.0  # Y轴
         obj.rotation_euler[2] = 0.0  # Z轴
+
+    # Set scale by user setting when import model.
+    scalefactor = get_import_model_scale()
+    obj.scale = scalefactor,scalefactor,scalefactor
 
     # Flush every time export
     bpy.context.view_layer.update()

@@ -3,6 +3,9 @@ import bpy
 from ..utils.vertexgroup_utils import *
 from ..utils.dbmt_utils import * 
 
+from bpy.props import FloatProperty
+
+
 # 全局配置用起来和管理起来都很方便，跟SpectrumQT学的。
 class CatterProperties(bpy.types.PropertyGroup):
     path: bpy.props.StringProperty(
@@ -26,13 +29,11 @@ class CatterProperties(bpy.types.PropertyGroup):
         default=""
     ) # type: ignore
 
-    model_workspace_name: bpy.props.StringProperty(
-        name="",
-        description="工作空间名称,手动输入名称则会提取到上面设置的默认路径下并以此名称创建新文件夹存储，手动点击按钮选择路径则会存储到选择的路径中",
-        default="",
-        subtype='DIR_PATH'
+    model_scale: FloatProperty(
+        name="导入模型整体缩放比例",
+        description="默认为1.0",
+        default=1.0,
     ) # type: ignore
-
 
     workspace_namelist :bpy.props.EnumProperty (
         items= dbmt_get_workspace_namelist,

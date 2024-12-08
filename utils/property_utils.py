@@ -8,6 +8,9 @@ def get_current_workspace_name()->str:
 def get_mmt_path()->str:
     return bpy.context.scene.dbmt.path
 
+def get_import_model_scale()->float:
+    return bpy.context.scene.dbmt.model_scale
+
 def draw_seperator(self):
     layout = self.layout
 
