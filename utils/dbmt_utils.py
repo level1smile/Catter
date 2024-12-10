@@ -118,8 +118,8 @@ def get_import_drawib_folder_path_dict()->list:
         import_folder_path_dict[draw_ib] = os.path.join(output_folder_path, draw_ib)
     return import_folder_path_dict
 
-def get_import_drawib_folder_path_dict_with_first_match_type()->list:
-    output_folder_path = dbmt_get_workspaced_output_folder_path()
+def get_import_drawib_folder_path_dict_with_first_match_type(workspace_folder_path:str)->list:
+    output_folder_path = workspace_folder_path
     draw_ib_list = get_extract_drawib_list_from_game_config_json()
     
     final_import_folder_path_dict = {}
@@ -247,10 +247,10 @@ def dbmt_get_workspace_namelist(self,context):
 
     return workspace_namelist
 
-def dbmt_get_workspaced_output_folder_path() -> str:
-    workspacename = bpy.context.scene.dbmt.workspace_namelist
-    if workspacename != "":
-        workspaced_outputfolder = get_output_folder_path() + workspacename + "\\"
+def dbmt_get_workspaced_output_folder_path(workspace_name:str) -> str:
+ 
+    if workspace_name != "":
+        workspaced_outputfolder = get_output_folder_path() + workspace_name + "\\"
         return workspaced_outputfolder
     else:
         return get_output_folder_path()
