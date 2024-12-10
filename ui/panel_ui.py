@@ -77,10 +77,10 @@ class PanelModelSingleIO(bpy.types.Panel):
         row.prop(context.scene.dbmt, "workspace_namelist")
         
         operator_import_ib_vb = layout.operator("import_mesh.migoto_raw_buffers_mmt", text="导入 .ib & .vb 模型文件")
-        operator_import_ib_vb.filepath = dbmt_get_workspaced_output_folder_path()
+        operator_import_ib_vb.filepath = dbmt_get_workspace_path(get_current_workspace_name())
         # 手动导出同理，点这个之后默认路径为OutputFolder，这样直接就能去导出不用翻很久文件夹找路径了
         operator_export_ibvb = layout.operator("export_mesh.migoto_mmt", text="导出 .ib & .vb 模型文件")
-        operator_export_ibvb.filepath = dbmt_get_workspaced_output_folder_path() + "1.vb"
+        operator_export_ibvb.filepath = dbmt_get_workspace_path(get_current_workspace_name()) + "1.vb"
 
 
 

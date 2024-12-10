@@ -591,7 +591,7 @@ class DBMTImportAllVbModelMerged(bpy.types.Operator):
 
     def execute(self, context):
         workspace_name = bpy.context.scene.dbmt.workspace_namelist
-        output_folder_path = dbmt_get_workspaced_output_folder_path(workspace_name)
+        output_folder_path = dbmt_get_workspace_path(workspace_name)
         ImprotFromWorkSpace(self,context,workspace_name,output_folder_path)
         return {'FINISHED'}
 
@@ -602,6 +602,6 @@ class DBMTImportAllFromCurrentWorkSpace(bpy.types.Operator):
 
     def execute(self, context):
         workspace_name = get_current_workspacename_from_main_json()
-        output_folder_path = dbmt_get_workspaced_output_folder_path(workspace_name)
+        output_folder_path = dbmt_get_workspace_path(workspace_name)
         ImprotFromWorkSpace(self,context,workspace_name,output_folder_path)
         return {'FINISHED'}

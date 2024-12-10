@@ -95,23 +95,23 @@ def get_game_config_json_path()->str:
 
 
 # Get drawib list from Game's Config.json.
-def get_extract_drawib_list_from_game_config_json()->list:
-    game_config_path = get_game_config_json_path()
+def get_extract_drawib_list_from_workspace_config_json()->list:
+    workspace_path = dbmt_get_workspace_path(get_current_workspacename_from_main_json())
+
+    game_config_path = os.path.join(workspace_path,"Config.json")
     game_config_file = open(game_config_path)
     game_config_json = json.load(game_config_file)
     game_config_file.close()
-    draw_ib_list = []
-    for ib_config in game_config_json:
-        draw_ib = ib_config["DrawIB"]
-        draw_ib_list.append(draw_ib)
+
+    draw_ib_list =game_config_json["DrawIBList"]
 
     return draw_ib_list
 
 
 # Get every drawib folder path from output folder.
 def get_import_drawib_folder_path_dict()->list:
-    output_folder_path = dbmt_get_workspaced_output_folder_path()
-    draw_ib_list = get_extract_drawib_list_from_game_config_json()
+    output_folder_path = dbmt_get_workspace_path()
+    draw_ib_list = get_extract_drawib_list_from_workspace_config_json()
     import_folder_path_dict = {}
     for draw_ib in draw_ib_list:
         # print("DrawIB:", draw_ib)
@@ -120,7 +120,7 @@ def get_import_drawib_folder_path_dict()->list:
 
 def get_import_drawib_folder_path_dict_with_first_match_type(workspace_folder_path:str)->list:
     output_folder_path = workspace_folder_path
-    draw_ib_list = get_extract_drawib_list_from_game_config_json()
+    draw_ib_list = get_extract_drawib_list_from_workspace_config_json()
     
     final_import_folder_path_dict = {}
 
@@ -231,7 +231,7 @@ def dbmt_run_generate_mod() -> str:
     dbmt_run_command("split")
     run_result = dbmt_get_run_result()
     if run_result == "success":
-        subprocess.run(['explorer',os.path.join(dbmt_get_workspaced_output_folder_path(),"GeneratedMod\\")])
+        subprocess.run(['explorer',os.path.join(dbmt_get_workspace_path(),"GeneratedMod\\")])
     return run_result
 
 def dbmt_get_workspace_namelist(self,context):
@@ -247,8 +247,7 @@ def dbmt_get_workspace_namelist(self,context):
 
     return workspace_namelist
 
-def dbmt_get_workspaced_output_folder_path(workspace_name:str) -> str:
- 
+def dbmt_get_workspace_path(workspace_name:str) -> str:
     if workspace_name != "":
         workspaced_outputfolder = get_output_folder_path() + workspace_name + "\\"
         return workspaced_outputfolder

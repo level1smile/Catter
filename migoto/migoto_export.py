@@ -318,7 +318,7 @@ class Export3DMigoto(bpy.types.Operator, ExportHelper):
         return {'FINISHED'}
 
 def ExportToWorkSpace(self,context,workspace_name:str):
-    output_folder_path = dbmt_get_workspaced_output_folder_path(workspace_name)
+    output_folder_path = dbmt_get_workspace_path(workspace_name)
         
     workspace_collection = bpy.context.collection
     for draw_ib_collection in workspace_collection.children:
