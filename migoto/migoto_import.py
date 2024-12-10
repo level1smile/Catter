@@ -596,7 +596,7 @@ class DBMTImportAllVbModelMerged(bpy.types.Operator):
         return {'FINISHED'}
 
 class DBMTImportAllFromCurrentWorkSpace(bpy.types.Operator):
-    bl_idname = "mmt.import_all_from_workspace"
+    bl_idname = "dbmt.import_all_from_workspace"
     bl_label = "Import all .ib .vb model from current WorkSpace folder."
     bl_description = "一键导入当前工作空间文件夹下所有的DrawIB对应的模型为分支集合架构"
 

@@ -117,11 +117,11 @@ class PanelModelWorkSpaceIO(bpy.types.Panel):
         row.label(text="当前工作空间: " + get_current_workspacename_from_main_json())
 
         # TODO 这俩要抽象出单独一个导入导出的，再由不同接口调用。
-        layout.operator("mmt.import_all_merged", text="一键导入")
+        layout.operator("dbmt.import_all_from_workspace", text="一键导入")
 
         draw_seperator(self)
         layout.prop(context.scene.dbmt,"generate_mod_after_export",text="一键导出后自动生成二创模型")
-        layout.operator("mmt.export_all_merged", text="一键导出")
+        layout.operator("dbmt.export_all_to_workspace", text="一键导出")
 
 
 class PanelGenerateMod(bpy.types.Panel):

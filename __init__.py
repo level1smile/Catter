@@ -35,6 +35,9 @@ register_classes = (
     DBMTImportAllVbModelMerged,
     DBMTExportMergedModVBModel,
 
+    DBMTImportAllFromCurrentWorkSpace,
+    DBMTExportAllToWorkSpace,
+
     # 右键菜单栏
     RemoveAllVertexGroupOperator,
     RemoveUnusedVertexGroupOperator,
