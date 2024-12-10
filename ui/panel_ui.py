@@ -57,14 +57,14 @@ class CatterConfigUI(bpy.types.Panel):
 
         draw_seperator(self)
         layout.prop(context.scene.dbmt, "export_same_number", text="导出不改变顶点数")
-        layout.prop(context.scene.dbmt,"generate_mod_after_export",text="一键导出后自动生成二创模型")
+      
         layout.prop(context.scene.dbmt,"import_merged_vgmap",text="使用重映射的全局顶点组")
         layout.prop(context.scene.dbmt,"model_scale")
         
 
 
-class PanelModelImport(bpy.types.Panel):
-    bl_label = "模型导入" 
+class PanelModelSingleIO(bpy.types.Panel):
+    bl_label = "模型手动导入导出" 
     bl_idname = "VIEW3D_PT_CATTER_ModelImport_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -78,11 +78,14 @@ class PanelModelImport(bpy.types.Panel):
         
         operator_import_ib_vb = layout.operator("import_mesh.migoto_raw_buffers_mmt", text="导入 .ib & .vb 模型文件")
         operator_import_ib_vb.filepath = dbmt_get_workspaced_output_folder_path()
-        layout.operator("mmt.import_all_merged", text="一键导入所有模型到工作空间集合[分支架构]")
+        # 手动导出同理，点这个之后默认路径为OutputFolder，这样直接就能去导出不用翻很久文件夹找路径了
+        operator_export_ibvb = layout.operator("export_mesh.migoto_mmt", text="导出 .ib & .vb 模型文件")
+        operator_export_ibvb.filepath = dbmt_get_workspaced_output_folder_path() + "1.vb"
 
 
-class PanelModelExport(bpy.types.Panel):
-    bl_label = "模型导出" 
+
+class PanelModelFastIO(bpy.types.Panel):
+    bl_label = "模型一键导入导出" 
     bl_idname = "VIEW3D_PT_CATTER_IO_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -94,16 +97,27 @@ class PanelModelExport(bpy.types.Panel):
         row = layout.row()
         row.prop(context.scene.dbmt, "workspace_namelist")
 
+        layout.operator("mmt.import_all_merged", text="一键导入所有模型到工作空间集合[分支架构]")
 
-        # 手动导出同理，点这个之后默认路径为OutputFolder，这样直接就能去导出不用翻很久文件夹找路径了
-        operator_export_ibvb = layout.operator("export_mesh.migoto_mmt", text="导出 .ib & .vb 模型文件")
-        operator_export_ibvb.filepath = dbmt_get_workspaced_output_folder_path() + "1.vb"
-
+        draw_seperator(self)
+        layout.prop(context.scene.dbmt,"generate_mod_after_export",text="一键导出后自动生成二创模型")
         layout.operator("mmt.export_all_merged", text="一键导出选中的工作空间集合[分支架构]")
 
 
 
+class PanelGenerateMod(bpy.types.Panel):
+    bl_label = "Generate Mod" 
+    bl_idname = "VIEW3D_PT_CATTER_GenerateMod_panel"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'Catter'
 
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text="Author Name:")
+        layout.prop(context.scene.dbmt, "credit_info_author_name")
+        layout.label(text="Social Link:")
+        layout.prop(context.scene.dbmt, "credit_info_author_social_link")
 
 
 class MigotoAttributePanel(bpy.types.Panel):

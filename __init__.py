@@ -14,7 +14,7 @@ bl_info = {
     "name": "Catter",
     "description": "A blender plugin for game mod with 3Dmigoto.",
     "blender": (4, 2, 3),
-    "version": (1, 0, 2, 9),
+    "version": (1, 0, 3, 0),
     "location": "View3D",
     "category": "Generic",
     "tracker_url":"https://github.com/StarBobis/Catter"
@@ -58,8 +58,9 @@ register_classes = (
     # UI
     CatterConfigUI,
     # PanelModelExtract,
-    PanelModelImport,
-    PanelModelExport,
+    PanelModelSingleIO,
+    PanelModelFastIO,
+    PanelGenerateMod,
     MigotoAttributePanel
 )
 
@@ -72,11 +73,6 @@ def register():
 
     bpy.types.VIEW3D_MT_object_context_menu.append(menu_func_migoto_right_click)
     bpy.types.OUTLINER_MT_collection.append(menu_dbmt_mark_collection_switch)
-
-
-    bpy.types.Scene.mmt_mmd_animation_mod_start_frame = bpy.props.IntProperty(name="Start Frame")
-    bpy.types.Scene.mmt_mmd_animation_mod_end_frame = bpy.props.IntProperty(name="End Frame")
-    bpy.types.Scene.mmt_mmd_animation_mod_play_speed = bpy.props.FloatProperty(name="Play Speed")
 
 
 def unregister():

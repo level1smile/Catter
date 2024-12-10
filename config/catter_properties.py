@@ -8,13 +8,14 @@ from bpy.props import FloatProperty
 
 # 全局配置用起来和管理起来都很方便，跟SpectrumQT学的。
 class CatterProperties(bpy.types.PropertyGroup):
+    # ------------------------------------------------------------------------------------------------------------
     path: bpy.props.StringProperty(
         name="DBMT-GUI.exe所在路径",
         description="插件需要先选择DBMT-GUI.exe的所在路径才能正常工作",
         default=load_dbmt_path(),
         subtype='DIR_PATH'
     ) # type: ignore
-
+    # ------------------------------------------------------------------------------------------------------------
     model_extract_output_path: bpy.props.StringProperty(
         name="",
         description="FrameAnalysis提取出的模型文件默认存放路径",
@@ -22,19 +23,19 @@ class CatterProperties(bpy.types.PropertyGroup):
         subtype='DIR_PATH'
     ) # type: ignore
 
-
-    draw_ib_input_text: bpy.props.StringProperty(
-        name="",
-        description="DrawIB指绘制时使用的IndexBuffer的Hash指，输入多个DrawIB用逗号隔开",
-        default=""
-    ) # type: ignore
+    # ------------------------------------------------------------------------------------------------------------
+    # draw_ib_input_text: bpy.props.StringProperty(
+    #     name="",
+    #     description="DrawIB指绘制时使用的IndexBuffer的Hash指，输入多个DrawIB用逗号隔开",
+    #     default=""
+    # ) # type: ignore
 
     model_scale: FloatProperty(
         name="导入模型整体缩放比例",
         description="默认为1.0",
         default=1.0,
     ) # type: ignore
-
+    # ------------------------------------------------------------------------------------------------------------
     workspace_namelist :bpy.props.EnumProperty (
         items= dbmt_get_workspace_namelist,
         name="工作空间",
@@ -53,7 +54,7 @@ class CatterProperties(bpy.types.PropertyGroup):
         description="导出时不改变顶点数 (在Unity-CPU-PreSkinning技术中常用，避免导出后顶点数变多导致无法和原本模型顶点数对应)",
         default=False
     ) # type: ignore
-
+    # ------------------------------------------------------------------------------------------------------------
     flip_tangent_w:bpy.props.BoolProperty(
         name="",
         description="翻转TANGENT.xyzw的w分量, 目前只有Unity游戏需要翻转这个w分量",
@@ -77,7 +78,7 @@ class CatterProperties(bpy.types.PropertyGroup):
         description="翻转TANGENT.xyzw的x分量 (仅用于测试)",
         default=False
     ) # type: ignore
-
+    # ------------------------------------------------------------------------------------------------------------
     flip_normal_w:bpy.props.BoolProperty(
         name="",
         description="翻转NORMAL.xyzw的w分量，只有有w分量的NORMAL才会被翻转w分量，因为大部分游戏的NORMAL都是NORMAL.xyz只有三个分量 (仅用于测试)",
@@ -108,6 +109,20 @@ class CatterProperties(bpy.types.PropertyGroup):
         default=False
     ) # type: ignore
 
+    # ------------------------------------------------------------------------------------------------------------
+    credit_info_author_name: bpy.props.StringProperty(
+        name="",
+        description="Author's name.",
+        default=""
+    ) # type: ignore
+
+    credit_info_author_social_link: bpy.props.StringProperty(
+        name="",
+        description="Author's social link.",
+        default=""
+    ) # type: ignore
+
+    # ------------------------------------------------------------------------------------------------------------
     def __init__(self) -> None:
         super().__init__()
         # self.subtype = 'DIR_PATH'
