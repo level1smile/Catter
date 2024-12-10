@@ -31,38 +31,8 @@ https://github.com/DarkStarSword/3d-fixes
 Without user feedback the Catter won't be useful like it is.
 Thanks for all user join development and send feedback and advice , issue etc.
 
-[Mod Reverse To Model]
-reverse_mod_manually.py and DBMT's reverse function huge thanks to:
-(most of name is hidden to protect their safety in AGMG and other community
-expect NicoMico who is the only public ProModder being banned and targeted at 2023)
-
-@Unknown AGMG Modder (Ko) | (original reverse scripts publisher)
-@Unknown AGMG Modder (Ko) | Technique support
-@Unknown AGMG ProModder (Ko) | Auto reverse POC
-@Unknown AGMG ProModders (Ru)| Switch Toggle Reverse Parsing POC / MMT C++ design
-@Unknown AGMG ProModder | DataType POC
-@Unknown AGMG ProModders | WWMI reverse scripts first publisher / POC.
-@Unknown AGMG ProModder (Global) Directly read mod buf file and ini into blender plugin first publisher
-@NicoMico (for learn, organize all reverse scripts 
-and combine them to better use and open source 
-and spread them everywhere for freedom spirit
-even under the pressure of being targeted, monitored, death threat, and subjected to harsh treatment 
-by the majority of AGMG personnel who benifit & make money from model/technique gatekeep)
-
-without their help the reverse mod function will never be made and spread.
-To pay the highest respect to their generosity, freedom spirit and selflessness!
 
 -------------------------------------
 感谢各位无名客为开发此工具付出的努力。
 愿此行，终抵群星。
-
-이 도구의 개발에 힘을 기울인 모든 무명의 손님들에게 감사드립니다.
-이 길이 결국에는 별들에 이르기를 바랍니다.
-
-Благодарим всех анонимных гостей за их усилия в разработке этого инструмента.
-Пусть этот путь приведет нас к звездам.
--------------------------------------
-
-To freedom.
-
 -------------------------------------
