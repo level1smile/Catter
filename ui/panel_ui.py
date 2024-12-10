@@ -85,7 +85,7 @@ class PanelModelSingleIO(bpy.types.Panel):
 
 
 class PanelModelFastIO(bpy.types.Panel):
-    bl_label = "模型一键导入导出" 
+    bl_label = "从选择的工作空间中导入导出" 
     bl_idname = "VIEW3D_PT_CATTER_IO_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -103,6 +103,25 @@ class PanelModelFastIO(bpy.types.Panel):
         layout.prop(context.scene.dbmt,"generate_mod_after_export",text="一键导出后自动生成二创模型")
         layout.operator("mmt.export_all_merged", text="一键导出选中的工作空间集合[分支架构]")
 
+class PanelModelWorkSpaceIO(bpy.types.Panel):
+    bl_label = "从当前工作空间中导入导出" 
+    bl_idname = "VIEW3D_PT_CATTER_WorkSpace_IO_panel"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'Catter'
+
+    def draw(self, context):
+        layout = self.layout
+
+        row = layout.row()
+        row.label(text="当前工作空间: " + get_current_workspacename_from_main_json())
+
+        # TODO 这俩要抽象出单独一个导入导出的，再由不同接口调用。
+        layout.operator("mmt.import_all_merged", text="一键导入")
+
+        draw_seperator(self)
+        layout.prop(context.scene.dbmt,"generate_mod_after_export",text="一键导出后自动生成二创模型")
+        layout.operator("mmt.export_all_merged", text="一键导出")
 
 
 class PanelGenerateMod(bpy.types.Panel):

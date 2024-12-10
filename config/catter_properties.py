@@ -24,9 +24,9 @@ class CatterProperties(bpy.types.PropertyGroup):
     ) # type: ignore
 
     # ------------------------------------------------------------------------------------------------------------
-    # draw_ib_input_text: bpy.props.StringProperty(
+    # workspace_name: bpy.props.StringProperty(
     #     name="",
-    #     description="DrawIB指绘制时使用的IndexBuffer的Hash指，输入多个DrawIB用逗号隔开",
+    #     description="当前DBMT-GUI中使用的工作空间",
     #     default=""
     # ) # type: ignore
 

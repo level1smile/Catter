@@ -60,6 +60,7 @@ register_classes = (
     # PanelModelExtract,
     PanelModelSingleIO,
     PanelModelFastIO,
+    PanelModelWorkSpaceIO,
     PanelGenerateMod,
     MigotoAttributePanel
 )

@@ -62,6 +62,22 @@ def get_current_game_from_main_json(in_path="") ->str:
     # print(current_game)
     return current_game
 
+# Read Main.json from DBMT folder and then get current workspace name.
+def get_current_workspacename_from_main_json(in_path="") ->str:
+    current_workspacename = ""
+    if in_path == "":
+        in_path = bpy.context.scene.dbmt.path
+
+    main_setting_path = os.path.join(in_path, "Configs\\Main.json")
+    # print(main_setting_path)
+    if os.path.exists(main_setting_path):
+        main_setting_file = open(main_setting_path)
+        main_setting_json = json.load(main_setting_file)
+        main_setting_file.close()
+        current_workspacename = main_setting_json.get("WorkSpaceName","")
+    # print(current_game)
+    return current_workspacename
+
 
 # Get current output folder.
 def get_output_folder_path() -> str:
