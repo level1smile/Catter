@@ -27,9 +27,9 @@ class CatterConfigUI(bpy.types.Panel):
         draw_seperator(self)
 
         # 获取DBMT.exe的路径
-        dbmt_gui_exe_path = os.path.join(context.scene.dbmt.path, "DBMT-GUI.exe")
+        dbmt_gui_exe_path = os.path.join(context.scene.dbmt.path, "DBMT.exe")
         if not os.path.exists(dbmt_gui_exe_path):
-            layout.label(text="错误:请选择DBMT-GUI.exe所在路径 ", icon='ERROR')
+            layout.label(text="错误:请选择DBMT.exe所在路径 ", icon='ERROR')
         
         row = layout.row()
         row.label(text="当前游戏: " + get_current_game_from_main_json())
