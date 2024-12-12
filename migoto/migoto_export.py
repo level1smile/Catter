@@ -409,7 +409,7 @@ def ExportToWorkSpace(self,context,workspace_name:str):
 
     # 调用生成二创模型方法。
     if context.scene.dbmt.generate_mod_after_export:
-        result = dbmt_run_generate_mod()
+        result = dbmt_run_generate_mod(workspace_name)
         if result == "success":
             self.report({'INFO'}, "生成二创模型成功!")
         else:

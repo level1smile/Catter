@@ -227,11 +227,11 @@ def dbmt_get_run_result() -> str:
     else:
         return "Unknown error lead to bad json format!"
 
-def dbmt_run_generate_mod() -> str:
+def dbmt_run_generate_mod(workspace_name:str) -> str:
     dbmt_run_command("split")
     run_result = dbmt_get_run_result()
     if run_result == "success":
-        subprocess.run(['explorer',os.path.join(dbmt_get_workspace_path(),"GeneratedMod\\")])
+        subprocess.run(['explorer',os.path.join(dbmt_get_workspace_path(workspace_name),"GeneratedMod\\")])
     return run_result
 
 def dbmt_get_workspace_namelist(self,context):

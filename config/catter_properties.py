@@ -54,6 +54,12 @@ class CatterProperties(bpy.types.PropertyGroup):
         description="导出时不改变顶点数 (在Unity-CPU-PreSkinning技术中常用，避免导出后顶点数变多导致无法和原本模型顶点数对应)",
         default=False
     ) # type: ignore
+
+    export_normalize_all: bpy.props.BoolProperty(
+        name="",
+        description="导出时把模型自动规格化权重，防止忘记手动规格化导致模型塌陷问题。",
+        default=False
+    ) # type: ignore
     # ------------------------------------------------------------------------------------------------------------
     flip_tangent_w:bpy.props.BoolProperty(
         name="",
