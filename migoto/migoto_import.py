@@ -271,6 +271,9 @@ def create_material_with_texture(obj, mesh_name:str, directory:str):
         # Nico: Currently only support EN and ZH-CN
         # 4.2 简体中文是 "原理化 BSDF" 英文是 "Principled BSDF"
         bsdf = material.node_tree.nodes.get("原理化 BSDF")
+        if not bsdf: 
+            # 3.6 简体中文是原理化BSDF 没空格
+            bsdf = material.node_tree.nodes.get("原理化BSDF")
         if not bsdf:
             bsdf = material.node_tree.nodes.get("Principled BSDF")
 
