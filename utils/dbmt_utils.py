@@ -103,7 +103,11 @@ def get_extract_drawib_list_from_workspace_config_json()->list:
     game_config_json = json.load(game_config_file)
     game_config_file.close()
 
-    draw_ib_list =game_config_json["DrawIBList"]
+    # draw_ib_list =game_config_json["DrawIBList"]
+    draw_ib_list = []
+    for item in game_config_json:
+        drawib_value = item["DrawIB"]
+        draw_ib_list.append(drawib_value)
 
     return draw_ib_list
 
