@@ -65,7 +65,10 @@ register_classes = (
     PanelModelFastIO,
     PanelModelWorkSpaceIO,
     PanelGenerateMod,
-    MigotoAttributePanel
+    MigotoAttributePanel,
+
+    # Select DBMT Path op
+    OBJECT_OT_select_dbmt_folder
 )
 
 
@@ -78,6 +81,8 @@ def register():
     bpy.types.VIEW3D_MT_object_context_menu.append(menu_func_migoto_right_click)
     bpy.types.OUTLINER_MT_collection.append(menu_dbmt_mark_collection_switch)
 
+    # bpy.app.handlers.save_post.append(DBMTUtils.save_dbmt_path())
+
 
 def unregister():
     for cls in reversed(register_classes):
@@ -86,6 +91,7 @@ def unregister():
     bpy.types.VIEW3D_MT_object_context_menu.remove(menu_func_migoto_right_click)
     bpy.types.OUTLINER_MT_collection.remove(menu_dbmt_mark_collection_switch)
 
+    # bpy.app.handlers.save_post.remove(DBMTUtils.save_dbmt_path())
 
 if __name__ == "__main__":
     register()

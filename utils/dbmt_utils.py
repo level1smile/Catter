@@ -4,46 +4,57 @@ import json
 import subprocess
 from .property_utils import *
 
-def save_dbmt_path(path):
-    # 获取当前脚本文件的路径
-    script_path = os.path.abspath(__file__)
+# TODO 不应该写单独的方法，否则会导致缺少类似命名空间的限制功能，导致调用的时候难以区分不同方法。
+class DBMTUtils:
 
-    # 获取当前插件的工作目录
-    plugin_directory = os.path.dirname(script_path)
+    @classmethod
+    def gogogo():
+        pass
 
-    # 构建保存文件的路径
-    config_path = os.path.join(plugin_directory, 'Config.json')
+    @classmethod
+    def save_dbmt_path(cls):
+        # 获取当前脚本文件的路径
+        script_path = os.path.abspath(__file__)
 
-    # 创建字典对象
-    config = {'dbmt_path': bpy.context.scene.mmt_props.path}
+        # 获取当前插件的工作目录
+        plugin_directory = os.path.dirname(script_path)
 
-    # 将字典对象转换为 JSON 格式的字符串
-    json_data = json.dumps(config)
+        # 构建保存文件的路径
+        config_path = os.path.join(plugin_directory, 'Config.json')
 
-    # 保存到文件
-    with open(config_path, 'w') as file:
-        file.write(json_data)
+        # 创建字典对象
+        config = {'dbmt_path': bpy.context.scene.dbmt.path}
+
+        # 将字典对象转换为 JSON 格式的字符串
+        json_data = json.dumps(config)
+
+        # 保存到文件
+        with open(config_path, 'w') as file:
+            file.write(json_data)
 
 
-def load_dbmt_path():
-    # 获取当前脚本文件的路径
-    script_path = os.path.abspath(__file__)
+    def load_dbmt_path():
+        # 获取当前脚本文件的路径
+        script_path = os.path.abspath(__file__)
 
-    # 获取当前插件的工作目录
-    plugin_directory = os.path.dirname(script_path)
+        # 获取当前插件的工作目录
+        plugin_directory = os.path.dirname(script_path)
 
-    # 构建配置文件的路径
-    config_path = os.path.join(plugin_directory, 'Config.json')
+        # 构建配置文件的路径
+        config_path = os.path.join(plugin_directory, 'Config.json')
 
-    # 读取文件
-    with open(config_path, 'r') as file:
-        json_data = file.read()
+        # 读取文件
+        with open(config_path, 'r') as file:
+            json_data = file.read()
 
-    # 将 JSON 格式的字符串解析为字典对象
-    config = json.loads(json_data)
+        # 将 JSON 格式的字符串解析为字典对象
+        config = json.loads(json_data)
 
-    # 读取保存的路径
-    return config['dbmt_path']
+        # 读取保存的路径
+        return config['dbmt_path']
+
+
+
 
 
 # Read Main.json from DBMT folder and then get current game name.

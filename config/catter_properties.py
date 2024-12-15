@@ -6,15 +6,46 @@ from ..utils.dbmt_utils import *
 from bpy.props import FloatProperty
 
 
+
+class OBJECT_OT_select_dbmt_folder(bpy.types.Operator):
+    bl_idname = "object.select_dbmt_folder"
+    bl_label = "Select DBMT Folder"
+
+    directory: bpy.props.StringProperty(
+        subtype='DIR_PATH',
+        options={'HIDDEN'},
+    ) # type: ignore
+
+    def execute(self, context):
+        scene = context.scene
+        if self.directory:
+            scene.dbmt.path = self.directory
+            print(f"Selected folder: {self.directory}")
+            # 在这里放置你想要执行的逻辑
+            # 比如验证路径是否有效、初始化某些资源等
+            DBMTUtils.save_dbmt_path()
+            
+            self.report({'INFO'}, f"Folder selected: {self.directory}")
+        else:
+            self.report({'WARNING'}, "No folder selected.")
+        
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        context.window_manager.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
+
 # 全局配置用起来和管理起来都很方便，跟SpectrumQT学的。
 class CatterProperties(bpy.types.PropertyGroup):
     # ------------------------------------------------------------------------------------------------------------
     path: bpy.props.StringProperty(
         name="DBMT-GUI.exe所在路径",
         description="插件需要先选择DBMT-GUI.exe的所在路径才能正常工作",
-        default=load_dbmt_path(),
+        default=DBMTUtils.load_dbmt_path(),
         subtype='DIR_PATH'
     ) # type: ignore
+
     # ------------------------------------------------------------------------------------------------------------
     model_extract_output_path: bpy.props.StringProperty(
         name="",

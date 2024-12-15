@@ -318,6 +318,7 @@ class Export3DMigoto(bpy.types.Operator, ExportHelper):
         return {'FINISHED'}
 
 def ExportToWorkSpace(self,context,workspace_name:str):
+    # 提前获取而不是在循环中获取，减少IO开销。
     output_folder_path = dbmt_get_workspace_path(workspace_name)
         
     workspace_collection = bpy.context.collection
