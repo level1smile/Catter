@@ -27,7 +27,7 @@ class CatterConfigUI(bpy.types.Panel):
             layout.label(text="错误:请选择DBMT所在路径 ", icon='ERROR')
         
         row = layout.row()
-        row.label(text="当前游戏: " + get_current_game_from_main_json())
+        row.label(text="当前游戏: " + DBMTUtils.get_current_game_from_main_json())
 
         draw_seperator(self)
 
@@ -71,10 +71,10 @@ class PanelModelSingleIO(bpy.types.Panel):
         row.prop(context.scene.dbmt, "workspace_namelist")
         
         operator_import_ib_vb = layout.operator("import_mesh.migoto_raw_buffers_mmt", text="导入 .ib & .vb 模型文件")
-        operator_import_ib_vb.filepath = dbmt_get_workspace_path(get_current_workspace_name())
+        operator_import_ib_vb.filepath = DBMTUtils.dbmt_get_workspace_path(get_current_workspace_name())
         # 手动导出同理，点这个之后默认路径为OutputFolder，这样直接就能去导出不用翻很久文件夹找路径了
         operator_export_ibvb = layout.operator("export_mesh.migoto_mmt", text="导出 .ib & .vb 模型文件")
-        operator_export_ibvb.filepath = dbmt_get_workspace_path(get_current_workspace_name()) + "1.vb"
+        operator_export_ibvb.filepath = DBMTUtils.dbmt_get_workspace_path(get_current_workspace_name()) + "1.vb"
 
 
 
@@ -108,7 +108,7 @@ class PanelModelWorkSpaceIO(bpy.types.Panel):
         layout = self.layout
 
         row = layout.row()
-        row.label(text="当前工作空间: " + get_current_workspacename_from_main_json())
+        row.label(text="当前工作空间: " + DBMTUtils.get_current_workspacename_from_main_json())
 
         # TODO 这俩要抽象出单独一个导入导出的，再由不同接口调用。
         layout.operator("dbmt.import_all_from_workspace", text="一键导入")

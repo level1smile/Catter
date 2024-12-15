@@ -319,7 +319,7 @@ class Export3DMigoto(bpy.types.Operator, ExportHelper):
 
 def ExportToWorkSpace(self,context,workspace_name:str):
     # 提前获取而不是在循环中获取，减少IO开销。
-    output_folder_path = dbmt_get_workspace_path(workspace_name)
+    output_folder_path = DBMTUtils.dbmt_get_workspace_path(workspace_name)
         
     workspace_collection = bpy.context.collection
     for draw_ib_collection in workspace_collection.children:
@@ -410,7 +410,7 @@ def ExportToWorkSpace(self,context,workspace_name:str):
 
     # 调用生成二创模型方法。
     if context.scene.dbmt.generate_mod_after_export:
-        result = dbmt_run_generate_mod(workspace_name)
+        result = DBMTUtils.dbmt_run_generate_mod(workspace_name)
         if result == "success":
             self.report({'INFO'}, "生成二创模型成功!")
         else:
@@ -435,6 +435,6 @@ class DBMTExportAllToWorkSpace(bpy.types.Operator):
     bl_description = "一键导出当前工作空间集合中所有的模型到对应的DrawIB的文件夹中并生成Export.json，隐藏显示的模型不会被导出，隐藏的DrawIB为名称的集合不会被导出。"
 
     def execute(self, context):
-        ExportToWorkSpace(self,context, get_current_workspacename_from_main_json())
+        ExportToWorkSpace(self,context, DBMTUtils.get_current_workspacename_from_main_json())
         return {'FINISHED'}
     
