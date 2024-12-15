@@ -36,9 +36,9 @@ class CollectionUtils:
         view_layer = bpy.context.view_layer
 
         # 查找指定名称的集合
-        collection = bpy.data.collections.get(collection_name)
+        collection1 = bpy.data.collections.get(collection_name,None)
         
-        if not collection:
+        if not collection1:
             print(f"集合 '{collection_name}' 不存在")
             return None
 
@@ -54,7 +54,7 @@ class CollectionUtils:
         exclude = layer_collection.exclude
 
         return {
-            'name': collection.name,
+            'name': collection1.name,
             'hide_viewport': hide_viewport,
             'exclude': exclude
         }
@@ -70,3 +70,14 @@ class CollectionUtils:
                 return True
         else:
             return False
+    
+    @classmethod
+    # get_collection_name_without_default_suffix
+    def get_clean_collection_name(cls,collection_name:str):
+        if "." in collection_name:
+            new_collection_name = collection_name.split(".")[0]
+            return new_collection_name
+        else:
+            return collection_name
+        
+

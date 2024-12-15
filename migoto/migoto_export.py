@@ -1,6 +1,8 @@
 from .input_layout import *
 from ..utils.dbmt_utils import *
 from ..utils.collection_utils import *
+from ..utils.json_utils import *
+
 import json
 import os.path
 import bpy
@@ -324,13 +326,15 @@ def ExportToWorkSpace(self,context,workspace_name:str):
     workspace_collection = bpy.context.collection
     for draw_ib_collection in workspace_collection.children:
         # Skip hide collection.
-        if not CollectionUtils.is_collection_visible():
+        if not CollectionUtils.is_collection_visible(draw_ib_collection.name):
             continue
 
-        draw_ib = draw_ib_collection.name
+        # get drawib
+        draw_ib = CollectionUtils.get_clean_collection_name(draw_ib_collection.name)
         if "." in draw_ib:
-            draw_ib = draw_ib.split(".")[0]
-
+            self.report({'ERROR'},"当前选中集合中的DrawIB集合名称被意外修改导致无法识别到DrawIB，请不要修改导入时以draw_ib为名称的集合")
+            return {'FINISHED'}
+       
         # 如果当前集合没有子集合，说明不是一个合格的分支Mod
         if len(draw_ib_collection.children) == 0:
             self.report({'ERROR'},"当前选中集合不是一个标准的分支模型集合，请检查您是否以分支集合方式导入了模型。")
@@ -338,18 +342,20 @@ def ExportToWorkSpace(self,context,workspace_name:str):
         
         # 构建一个export.json，记录当前集合所有object层级关系
         export_json = {}
-        for part_collection in draw_ib_collection.children:
+        for component_collection in draw_ib_collection.children:
             # 从集合名称中获取导出后部位的名称，如果有.001这种自动添加的后缀则去除掉
-            export_part_name = part_collection.name
-            if "." in export_part_name:
-                export_part_name = export_part_name[0:len(export_part_name) - 4]
+            component_name = CollectionUtils.get_clean_collection_name(component_collection.name)
 
-            part_collection_json = {}
-            for model_collection in part_collection.children:
+            component_collection_json = {}
+            for model_collection in component_collection.children:
+                # 如果模型不可见则跳过。
+                if not CollectionUtils.is_collection_visible(model_collection.name):
+                    continue
+
                 # 声明一个model_collection对象
                 model_collection_json = {}
 
-                # 先根据颜色确定是什么类型的集合 03是开关 04是分支
+                # 先根据颜色确定是什么类型的集合 03黄色是开关 04绿色是分支
                 model_collection_type = "default"
                 if model_collection.color_tag == "COLOR_03":
                     model_collection_type = "switch"
@@ -366,29 +372,24 @@ def ExportToWorkSpace(self,context,workspace_name:str):
                 model_collection_json["model"] = model_collection_obj_name_list
 
                 # 集合的名称后面用作注释标记到ini文件中
-                part_collection_json[model_collection.name] = model_collection_json
+                component_collection_json[model_collection.name] = model_collection_json
 
-            export_json[export_part_name] = part_collection_json
+            export_json[component_name] = component_collection_json
 
-        # 将字典转换为 JSON 格式的字符串
-        json_string = json.dumps(export_json, ensure_ascii=False, indent=4)
-        # 将 JSON 字符串写入文件
-
+        # Save to file.
         exported_folder_path = os.path.join(output_folder_path, draw_ib + "/ExportedModel/")
-
         if not os.path.exists(exported_folder_path):
             os.makedirs(exported_folder_path)
-
-
-        export_json_path = exported_folder_path + 'export.json'
-        print(export_json_path)
-        with open(export_json_path, 'w', encoding='utf-8') as f:
-            f.write(json_string)
+        JsonUtils.SaveToFile(exported_folder_path + 'export.json',export_json)
 
         # 随后直接导出所有模型
         export_time = 0
-        for child_part_collection in draw_ib_collection.children:
-            for model_collection in child_part_collection.children:
+        for export_component_collection in draw_ib_collection.children:
+            for model_collection in export_component_collection.children:
+                # 如果模型不可见则跳过。
+                if not CollectionUtils.is_collection_visible(model_collection.name):
+                    continue
+
                 for obj in model_collection.objects:
                     # 判断对象是否为网格对象
                     if obj.type == 'MESH' and obj.hide_get() == False:
