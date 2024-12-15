@@ -8,10 +8,6 @@ from .property_utils import *
 class DBMTUtils:
 
     @classmethod
-    def gogogo():
-        pass
-
-    @classmethod
     def save_dbmt_path(cls):
         # 获取当前脚本文件的路径
         script_path = os.path.abspath(__file__)
