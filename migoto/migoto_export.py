@@ -323,11 +323,9 @@ def ExportToWorkSpace(self,context,workspace_name:str):
         
     workspace_collection = bpy.context.collection
     for draw_ib_collection in workspace_collection.children:
-        collection_property = get_collection_properties(draw_ib_collection.name)
-
-        if collection_property is not None:
-            if collection_property["hide_viewport"]:
-                continue
+        # Skip hide collection.
+        if not CollectionUtils.is_collection_visible():
+            continue
 
         draw_ib = draw_ib_collection.name
         if "." in draw_ib:

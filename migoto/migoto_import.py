@@ -583,7 +583,7 @@ def ImprotFromWorkSpace(self, context,workspace_name:str,output_folder_path:str)
     bpy.context.scene.collection.children.link(workspace_collection)
 
     # Select all objects under collection.
-    select_collection_objects(workspace_collection)
+    CollectionUtils.select_collection_objects(workspace_collection)
 
 
 
