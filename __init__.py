@@ -9,12 +9,12 @@ from .migoto.migoto_export import *
 
 from .config.catter_properties import *
 
-
+# Compatible with all version start from Blender 3.6 LTS To 4.2LTS To Latest version.
 bl_info = {
     "name": "Catter",
     "description": "A blender plugin for game mod with 3Dmigoto.",
-    "blender": (4, 2, 3),
-    "version": (1, 0, 3, 4),
+    "blender": (3, 6, 0),
+    "version": (1, 0, 3, 5),
     "location": "View3D",
     "category": "Generic",
     "tracker_url":"https://github.com/StarBobis/Catter"
