@@ -14,7 +14,7 @@ bl_info = {
     "name": "Catter",
     "description": "A blender plugin for game mod with 3Dmigoto.",
     "blender": (4, 2, 3),
-    "version": (1, 0, 3, 3),
+    "version": (1, 0, 3, 4),
     "location": "View3D",
     "category": "Generic",
     "tracker_url":"https://github.com/StarBobis/Catter"
@@ -81,7 +81,6 @@ def register():
     bpy.types.VIEW3D_MT_object_context_menu.append(menu_func_migoto_right_click)
     bpy.types.OUTLINER_MT_collection.append(menu_dbmt_mark_collection_switch)
 
-    # bpy.app.handlers.save_post.append(DBMTUtils.save_dbmt_path())
 
 
 def unregister():
@@ -91,7 +90,6 @@ def unregister():
     bpy.types.VIEW3D_MT_object_context_menu.remove(menu_func_migoto_right_click)
     bpy.types.OUTLINER_MT_collection.remove(menu_dbmt_mark_collection_switch)
 
-    # bpy.app.handlers.save_post.remove(DBMTUtils.save_dbmt_path())
 
 if __name__ == "__main__":
     register()
